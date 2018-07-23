@@ -1,5 +1,5 @@
 OPC opc1;
-//OPC opc2;
+OPC opc2;
 PImage dot;
 
 void setup()
@@ -10,15 +10,24 @@ void setup()
 
   // Connect to the local instance of fcserver
   opc1 = new OPC(this, "10.0.0.31", 7890);
-  // opc2 = new OPC(this, "127.0.0.1", 7891);
-  
+  opc2 = new OPC(this, "10.0.0.32", 7890);
+
   int numStrips = 8;
   int vertSpacing = 40;
   int vertOffSet = 100;
-  for( int i = 0; i < numStrips; i++){
-    opc1.ledStrip(i, 32, width/2, i * height/vertSpacing + vertOffSet , width / 70.0, 0, false);
-  }
-  
+  //for ( int i = 0; i < 4; i++) {
+  //  opc1.ledStrip(i, 32, width/2, i * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //}
+
+  opc1.ledStrip(0, 32, width/2, 0 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc1.ledStrip(1, 32, width/2, 1 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc1.ledStrip(2, 32, width/2, 2 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc1.ledStrip(3, 32, width/2, 3 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc2.ledStrip(0, 32, width/2, 4 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc2.ledStrip(1, 32, width/2, 5 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc2.ledStrip(2, 32, width/2, 6 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  opc2.ledStrip(3, 32, width/2, 7 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+
   //opc1.ledStrip(0, 16, width/2, 0 * height/8, width / 70.0, 0, false);
   //opc1.ledStrip(1, 16, width/2, 1 * height/8, width / 70.0, 0, false);
   //opc1.ledStrip(1, 3, width/2, 1 * width / 70.0, width / 70.0, 0, false);

@@ -249,7 +249,7 @@ public class OPC implements Runnable
     }
 
     int numPixels = pixelLocations.length;
-    println(numPixels);
+    //println(numPixels);
     int ledAddress = 4;
 
     setPixelCount(numPixels);

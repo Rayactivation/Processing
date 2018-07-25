@@ -17,7 +17,7 @@ void setup()
   opc4 = new OPC(this, "10.0.0.33", 7890);
 
   int numStrips = 8;
-  int vertSpacing = 40;
+  int vertSpacing =20;
   int vertOffSet = 100;
   //for ( int i = 0; i < 4; i++) {
   //  opc1.ledStrip(i, 32, width/2, i * height/vertSpacing + vertOffSet, width / 70.0, 0, false);

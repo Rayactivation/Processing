@@ -6,7 +6,7 @@ OPC opc4;
 int rayCanvasWidth = 700;   // 7 meters
 int rayCanvasHeight = 400;  // 4 meters
 
-float twoInches = 5.08;
+float twoInches = 5.5;
 //float ledSpacing = 10/3;    // 30/m  3.33333
 //float ledSpacing = 269 / 80;
 float ledSpacing = 3.3;
@@ -21,8 +21,8 @@ void setup() {
   opc2 = new OPC(this, "10.0.0.31", 7890);
   opc3 = new OPC(this, "10.0.0.32", 7890);
   opc4 = new OPC(this, "10.0.0.33", 7890);
-  
-  
+
+  int centering = 20;
 
   //Setup opc1 - 48 strips in teh left wing
   for (int i = 0; i < 48; i ++) {
@@ -33,7 +33,12 @@ void setup() {
   for (int i = 0; i < 8; i ++) {
     opc2.ledStrip(i, 80, (307 / 2) + (300 / 2) - 17, i * twoInches + (twoInches * 48) + 150, ledSpacing, 0, true);
   }
-
+  
+  //Leds for body front
+  for (int i = 0; i < 23; i ++) {
+    opc2.ledStrip(8 + i, 80, (i * twoInches) + 418, 150 + centering, ledSpacing, PI / 2, true);
+  }
+  
   //setup opc3 - 48 strips in the right wing
   for (int i = 0; i < 48; i ++) {
     opc3.ledStrip(i, 80, ( 365 + 307 / 2) + (300 / 2) - 20, (i * twoInches) + 150, ledSpacing, 0, false);
@@ -42,6 +47,11 @@ void setup() {
   //setup opc 4
   for (int i = 0; i < 8; i ++) {
     opc4.ledStrip(i, 80, ( 365 + 307 / 2) + (300 / 2) - 20, i * twoInches + (twoInches * 48) + 150, ledSpacing, 0, false);
+  }
+
+  //Leds for body back
+  for (int i = 0; i < 15; i++){
+     opc4.ledStrip(8 + i, 80, (i * twoInches) + 418, 450 -  centering, ledSpacing, 3 * PI / 2, true);
   }
 
   //opc1.ledStrip(0, 32, width/2, 0 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
@@ -64,7 +74,7 @@ void draw() {
   println(mouseX, mouseY);
 
   fill(255, 255, 0);
-  ellipse(mouseX, mouseY, 15, 15);
+  ellipse(mouseX, mouseY, 20, 20);
 }
 
 void drawRayShape() {

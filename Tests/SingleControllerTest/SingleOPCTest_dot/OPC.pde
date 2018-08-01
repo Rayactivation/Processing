@@ -53,7 +53,7 @@ public class OPC implements Runnable
   // (x,y) is the center of the strip.
   void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
   {
-
+    
     float s = sin(angle);
     float c = cos(angle);
     for (int i = 0; i < count; i++) {
@@ -67,6 +67,7 @@ public class OPC implements Runnable
       //print(" " + ((int)(y + (i - (count-1)/2.0) * spacing * s + 0.5)));
       //println("");
     }
+    
   }
 
   // Set the locations of a ring of LEDs. The center of the ring is at (x, y),
@@ -241,16 +242,14 @@ public class OPC implements Runnable
   {
     if (pixelLocations == null) {
       // No pixels defined yet
-      println("no pixels defined");
       return;
     }
     if (output == null) {
-      drawPixelsWithoutConnection();
       return;
     }
 
     int numPixels = pixelLocations.length;
-    //println(numPixels);
+    println(numPixels);
     int ledAddress = 4;
 
     setPixelCount(numPixels);
@@ -384,27 +383,5 @@ public class OPC implements Runnable
       catch(InterruptedException e) {
       }
     }
-  }
-
-  void drawPixelsWithoutConnection() {
-    int numPixels = pixelLocations.length;
-    //println(numPixels);
-    int ledAddress = 4;
-
-    setPixelCount(numPixels);
-    loadPixels();
-
-    for (int i = 0; i < numPixels; i++) {
-      int pixelLocation = pixelLocations[i];
-      int pixel = pixels[pixelLocation];
-
-
-
-      if (enableShowLocations) {
-        pixels[pixelLocation] = 0xFFFFFF ^ pixel;
-        
-      }
-    }
-    updatePixels();
   }
 }

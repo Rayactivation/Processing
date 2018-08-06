@@ -33,19 +33,14 @@ def main():
     middle_width = (max(len(front), len(back)) + 1) * strip_spacing_inches
     center_x = wing_width + (middle_width / 2)
     
-    left_side_center_x = (307 / 2) + (300 / 2) - 17
     left_start = wing_width
-    
-    right_side_center_x = ( 365 + 307 / 2) + (300 / 2) - 20
     right_start = left_start + middle_width
 
 
-    front_shortest = min(row['Length'] for row in front)
     front_longest = max(row['Length'] for row in front)
     # I'm not really sure where the body is in relation to the wings
     # so this is just a guess!
     wing_offset = 18
-    wing_end = wing_offset + (len(side) -1 )* strip_spacing_inches
     
     layout = []
     for row in side:

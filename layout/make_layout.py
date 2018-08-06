@@ -1,3 +1,9 @@
+"""Parse the tsv files containing strip information and create
+layout files that can be used by OPC clients and servers.
+
+Want to be able to support local development mode, which is generally one
+opc server on 127.0.0.1, and also production, which will be 4 opc server.
+"""
 import csv
 import json
 import math
@@ -13,6 +19,8 @@ def getLengths(rows):
     return [{'Index': int(r['Index']), 'Length': float(r['Length'])} for r in rows]
 
 
+# TODO: add the OPC host and port to each tsv file.
+# TODO: Figure out wiring order!
 def main():
     with open(os.path.join(DIR, 'side.tsv')) as fin:
         side = getLengths(csv.DictReader(fin, delimiter='\t'))
@@ -20,11 +28,6 @@ def main():
         front = getLengths(csv.DictReader(fin, delimiter='\t'))
     with open(os.path.join(DIR, 'back.tsv')) as fin:
         back = getLengths(csv.DictReader(fin, delimiter='\t'))
-
-    # We have 30 pixels per meter but the layout lengths
-    # are in inches, so to convert:
-    # 30 pixels / m * 0.0254 m / in = 0.762 pixels / in
-
 
     wing_width = max(row['Length'] for row in side)
     middle_width = (max(len(front), len(back)) + 1) * strip_spacing_inches
@@ -85,15 +88,8 @@ def main():
         for coordinate in point:
             assert coordinate >= 0
     with open(os.path.join(DIR, 'layout.json'), 'w') as fout:
-        json.dump([{'point': p} for p in points], fout)
+        json.dump([{'host': '127.0.0.1', 'port': 7890, 'point': p} for p in points], fout)
 
 
 if __name__ == '__main__':
     sys.exit(main())
-    # import random
-    # points = [{
-    #     'point': [
-    #         round(n, 2) for n in [random.random(), random.random(), random.random()]]}
-    #     for _ in range(1000)]
-    # with open('layout.json', 'w') as fout:
-    #     json.dump(points, fout)

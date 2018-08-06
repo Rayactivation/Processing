@@ -21,33 +21,40 @@ def main():
     print(min_x, min_y, max_x, max_y)
     width = max_x - min_x
     height = max_y - min_y
-    print('Width (in): {}'.format(width))
     x_pixels = int(width * px_per_in)
+    y_pixels = int(height * px_per_in)
+    
+    # keep adding pixels until there are no doubles.  This is roughly
+    # the smallest screen size that we can use.
+    while True:
+        pixels = convert_to_pixels(data, min_x, x_pixels, width, min_y, y_pixels, height)
+        counter = collections.Counter(pixels)
+        cnts = collections.defaultdict(list)
+        found_double = False
+        for pt, cnt in counter.most_common():
+            if cnt > 1:
+                found_double = True
+                break
+        if found_double:
+            x_pixels += 1
+            y_pixels += 1
+        else:
+            break
+
+    print('Width (in): {}'.format(width))
     print('Width (px): {}'.format(x_pixels))
     print('Height (in): {}'.format(height))
-    y_pixels = int(height * px_per_in)
     print('Width (px): {}'.format(y_pixels))
-
-    # Check Converting to dense pixels
-    pixels = convert_to_pixels(data, min_x, x_pixels, width, min_y, y_pixels, height)
-    counter = collections.Counter(pixels)
-    cnts = collections.defaultdict(list)
-    for pt, cnt in counter.most_common():
-        if cnt <= 1:
-            break
-        cnts[cnt].append(pt)
-    print(cnts)
-    for key, value in cnts.items():
-        print(key, len(value))
 
 
 def convert_to_pixels(data, min_x, x_pixels, width, min_y, y_pixels, height):
     for datum in data:
         point = datum['point']
-        yield (
-            int((point[0] - min_x) * x_pixels / width),
-            int((point[1] - min_y) * y_pixels / height)
-        )
+        x = int((point[0] - min_x) * (x_pixels - 1) / width)
+        assert x < x_pixels
+        y = int((point[1] - min_y) * (y_pixels - 1) / height)
+        assert y < y_pixels
+        yield (x, y)
 
 
 if __name__ == '__main__':

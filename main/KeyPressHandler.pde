@@ -1,4 +1,8 @@
+//TODO - setup an animation cycler
+
 void keyPressed() {
   //place holder key press handler
-  println("key pressed");
+  if (key == 'a' || key == 'A') {
+    println("a pressed");
+  }
 }

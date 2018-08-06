@@ -1,3 +1,25 @@
+/*
+
+OSCHandler space
+
+Handlers for:
+- Heat cam
+- Animation secection controller
+- Ray position informaiton
+
+*/
+
+
+import oscP5.*;
+import netP5.*;
+OscP5 oscP5tcpServer;
+
+int oscInputPort = 5000;
+
+void oscSetup(){
+   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
+}
+
 void oscEvent(OscMessage theMessage) {
   /* in this example, both the server and the client share this oscEvent method */
   System.out.println("### got a message " + theMessage);

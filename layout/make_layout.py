@@ -39,13 +39,12 @@ def main():
     right_side_center_x = ( 365 + 307 / 2) + (300 / 2) - 20
     right_start = left_start + middle_width
 
-    # y = 0 needs to match up with the end of the
-    # longest piece up front
-    # and the start of the wing needs to line up with the
-    # end of the shortest piece up front
+
     front_shortest = min(row['Length'] for row in front)
     front_longest = max(row['Length'] for row in front)
-    wing_offset = front_longest - front_shortest
+    # I'm not really sure where the body is in relation to the wings
+    # so this is just a guess!
+    wing_offset = 18
     wing_end = wing_offset + (len(side) -1 )* strip_spacing_inches
     
     layout = []
@@ -57,29 +56,72 @@ def main():
             layout.append((left_start - offset, y, 0))
             layout.append((right_start + offset, y, 0))
 
-    # my assumption is that the shortest strip in the front
+
+    #
+    # The front and back parts meet in the middle, but with a gap.
+    # There is also a bubble in the front.
+    # https://drive.google.com/open?id=0B3kxL7TL-XXES0NnSlJFWDdvdWlZVjBkandVMTNaZUpkUzZj
+    #
+    # Back   |  Front
+    #
+    #               ---
+    #  ------|----------
+    # -------|-----------
+    # -----     -------
+    # -----     -------
+    # -------|-----------
+    #  ------|----------
+    #               ---
+    #
+    # The gap is 8.96" in both directions (and 13.81" high).
+    # For the front, there are:
+    # 4 strips that are part of the bubble
+    # 4 strips that start from the mid-line
+    # There are 7 strips that start at the gap.
+    # 4 strips that start from the mid-line
+    # 4 strips that are part of the bubble
+    #
+    gap = 8.96
+    bubble_starts = tuple(range(25, 9, -4))
+    assert len(bubble_starts) == 4, bubble_starts
+    midline_starts = (0,) * 4
+    gap_starts = (8.96,) * 7
+    front_starts = (
+        bubble_starts + midline_starts + gap_starts +
+        midline_starts + tuple(reversed(bubble_starts)))
+
+    assert len(front_starts) == len(front), len(front_starts)
+    # my assumption is that the front
     # should end at the start of the wings in the front
-    front_y_start = front_longest
+    midline = front_longest
     front_width = (len(front) + 1) * strip_spacing_inches
     front_x_start = center_x - front_width / 2
-    for row in front:
+    for fs, row in zip(front_starts, front):
         x = front_x_start + (row['Index'] + 1) * strip_spacing_inches
         n_pixels = int(float(row['Length']) * px_per_in)
         for col in range(n_pixels + 1):
-            y = front_y_start - col * in_per_px
+            y = midline - fs - col * in_per_px
+            assert y >= 0, (y, fs, row)
             layout.append((x, y, 0))
-            
-    # my assumption is that the shortest strip in the back
-    # should end at the start of the wings in the back
-    back_offset = min(row['Length'] for row in back)
-    back_y_start = wing_end - back_offset
+
+    # The back is simpler:
+    # 4 strips at the midline
+    # 7 strips at the gap
+    # 4 strips at the midline
+    back_starts = ((0,)*4 + (gap,) * 7 + (0,)*4)
+    assert len(back_starts) == len(back)
+
+    # back_offset = min(row['Length'] for row in back)
+    # back_y_start = wing_end - back_offset
     back_width = (len(back) + 1) * strip_spacing_inches
     back_x_start = center_x - back_width / 2
-    for row in back:
+    for bs, row in zip(back_starts, back):
         x = back_x_start + (row['Index'] + 1) * strip_spacing_inches
         n_pixels = int(float(row['Length']) * px_per_in)
         for col in range(n_pixels + 1):
-            y = back_y_start + col * in_per_px
+            # start at the midline and offset by one pixel
+            # so that we don't have overlap with the front
+            y = midline + in_per_px + bs + col * in_per_px
             layout.append((x, y, 0))
     
     print("Total pixels: {}".format(len(layout)))
@@ -87,6 +129,7 @@ def main():
     for point in points:
         for coordinate in point:
             assert coordinate >= 0
+    assert len(points) == 6088
     with open(os.path.join(DIR, 'layout.json'), 'w') as fout:
         json.dump([{'host': '127.0.0.1', 'port': 7890, 'point': p} for p in points], fout)
 

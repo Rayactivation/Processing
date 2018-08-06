@@ -11,7 +11,7 @@ void setup()
   dot = loadImage("dot.png");
 
   // Connect to the local instance of fcserver
-  opc1 = new OPC(this, "10.0.0.30", 7890);
+  opc1 = new OPC(this, "10.0.0.31", 7890);
   opc2 = new OPC(this, "10.0.0.31", 7890);
   opc3 = new OPC(this, "10.0.0.32", 7890);
   opc4 = new OPC(this, "10.0.0.33", 7890);
@@ -22,15 +22,32 @@ void setup()
   //for ( int i = 0; i < 4; i++) {
   //  opc1.ledStrip(i, 32, width/2, i * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
   //}
+  for (int i = 0; i< 23; i++) {
+    opc1.ledStrip(i, 80, width/2, i * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  }
+  //opc1.ledStrip(0, 80, width/2, 0 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(1, 80, width/2, 1 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(2, 80, width/2, 2 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(3, 80, width/2, 3 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(4, 80, width/2, 4 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(5, 80, width/2, 5 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(6, 80, width/2, 6 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(7, 80, width/2, 1 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(8, 80, width/2, 0 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(9, 80, width/2, 1 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(10, 80, width/2, 0 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(11, 80, width/2, 1 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(13, 80, width/2, 0 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(14, 80, width/2, 1 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
+  //opc1.ledStrip(15, 80, width/2, 0 * height/vertSpacing + vertOffSet, width / 100.0, 0, false);
 
-  opc1.ledStrip(0, 32, width/2, 0 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc1.ledStrip(1, 32, width/2, 1 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc2.ledStrip(0, 32, width/2, 2 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc2.ledStrip(1, 32, width/2, 3 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc3.ledStrip(0, 32, width/2, 4 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc3.ledStrip(1, 32, width/2, 5 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc4.ledStrip(0, 32, width/2, 6 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
-  opc4.ledStrip(1, 32, width/2, 7 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+
+  //opc2.ledStrip(0, 32, width/2, 2 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //opc2.ledStrip(1, 32, width/2, 3 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //opc3.ledStrip(0, 32, width/2, 4 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //opc3.ledStrip(1, 32, width/2, 5 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //opc4.ledStrip(0, 32, width/2, 6 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
+  //opc4.ledStrip(1, 32, width/2, 7 * height/vertSpacing + vertOffSet, width / 70.0, 0, false);
 
   //opc1.ledStrip(0, 16, width/2, 0 * height/8, width / 70.0, 0, false);
   //opc1.ledStrip(1, 16, width/2, 1 * height/8, width / 70.0, 0, false);

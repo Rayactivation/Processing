@@ -1,6 +1,12 @@
+//OSC support
+import oscP5.*;
+import netP5.*;
+
 Pattern currentPattern;
 int nextPatternTime;
 ArrayList<Class> patternClasses;
+
+OscP5 oscP5tcpServer;
 
 void setup() {
   frameRate(30);
@@ -9,6 +15,9 @@ void setup() {
   patternClasses = new ArrayList<Class>();
   patternClasses.add(PatternA.class);
   patternClasses.add(PatternB.class);
+  
+  oscP5tcpServer = new OscP5(this, 5000, OscP5.UDP);
+  
 }
 
 void draw() {

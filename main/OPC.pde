@@ -5,7 +5,7 @@
  * Micah Elizabeth Scott, 2013
  * This file is released into the public domain.
  */
-
+import java.util.List;
 import java.net.*;
 import java.util.Arrays;
 
@@ -18,6 +18,7 @@ public class OPC implements Runnable
   int port;
 
   int[] pixelLocations;
+  Boolean[] pixelMask;
   byte[] packetData;
   byte firmwareConfig;
   String colorCorrection;
@@ -34,18 +35,31 @@ public class OPC implements Runnable
     parent.registerMethod("draw", this);
   }
 
-  // Set the location of a single LED
-  void led(int index, int x, int y)  
-  {
+  void growArrays(int index) {
     // For convenience, automatically grow the pixelLocations array. We do want this to be an array,
     // instead of a HashMap, to keep draw() as fast as it can be.
     if (pixelLocations == null) {
       pixelLocations = new int[index + 1];
+      pixelMask = new Boolean[index + 1];
     } else if (index >= pixelLocations.length) {
       pixelLocations = Arrays.copyOf(pixelLocations, index + 1);
+      pixelMask = Arrays.copyOf(pixelMask, index + 1);
     }
+  }
 
+  // Set the location of a single LED
+  void led(int index, int x, int y)  
+  {
+    growArrays(index);
+    pixelMask[index] = true;
     pixelLocations[index] = x + width * y;
+  }
+
+  // the led at this location will be set to 0/black
+  // Can be used if "filler" pixels are needed.
+  void nullLed(int index) {
+    growArrays(index);
+    pixelMask[index] = false;
   }
 
   // Set the location of several LEDs arranged in a strip.
@@ -53,7 +67,7 @@ public class OPC implements Runnable
   // (x,y) is the center of the strip.
   void ledStrip(int index, int count, float x, float y, float spacing, float angle, boolean reversed)
   {
-    
+
     float s = sin(angle);
     float c = cos(angle);
     for (int i = 0; i < count; i++) {
@@ -67,7 +81,6 @@ public class OPC implements Runnable
       //print(" " + ((int)(y + (i - (count-1)/2.0) * spacing * s + 0.5)));
       //println("");
     }
-    
   }
 
   // Set the locations of a ring of LEDs. The center of the ring is at (x, y),
@@ -242,9 +255,11 @@ public class OPC implements Runnable
   {
     if (pixelLocations == null) {
       // No pixels defined yet
+      println("no pixels defined");
       return;
     }
     if (output == null) {
+      drawPixelsWithoutConnection();
       return;
     }
 
@@ -256,16 +271,23 @@ public class OPC implements Runnable
     loadPixels();
 
     for (int i = 0; i < numPixels; i++) {
-      int pixelLocation = pixelLocations[i];
-      int pixel = pixels[pixelLocation];
+      if (pixelMask[i]) {
+        int pixelLocation = pixelLocations[i];
+        int pixel = pixels[pixelLocation];
 
-      packetData[ledAddress] = (byte)(pixel >> 16);
-      packetData[ledAddress + 1] = (byte)(pixel >> 8);
-      packetData[ledAddress + 2] = (byte)pixel;
-      ledAddress += 3;
+        packetData[ledAddress] = (byte)(pixel >> 16);
+        packetData[ledAddress + 1] = (byte)(pixel >> 8);
+        packetData[ledAddress + 2] = (byte)pixel;
+        ledAddress += 3;
 
-      if (enableShowLocations) {
-        pixels[pixelLocation] = 0xFFFFFF ^ pixel;
+        if (enableShowLocations) {
+          pixels[pixelLocation] = 0xFFFFFF ^ pixel;
+        }
+      } else {
+        packetData[ledAddress] = (byte)0;
+        packetData[ledAddress + 1] = (byte)0;
+        packetData[ledAddress + 2] = (byte)0;
+        ledAddress += 3;
       }
     }
 
@@ -383,5 +405,22 @@ public class OPC implements Runnable
       catch(InterruptedException e) {
       }
     }
+  }
+
+  void drawPixelsWithoutConnection() {
+    int numPixels = pixelLocations.length;
+
+    setPixelCount(numPixels);
+    loadPixels();
+
+    for (int i = 0; i < numPixels; i++) {
+      int pixelLocation = pixelLocations[i];
+      int pixel = pixels[pixelLocation];
+
+      if (enableShowLocations) {
+        pixels[pixelLocation] = 0xFFFFFF ^ pixel;
+      }
+    }
+    updatePixels();
   }
 }

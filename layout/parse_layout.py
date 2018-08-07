@@ -21,8 +21,8 @@ def main():
     print(min_x, min_y, max_x, max_y)
     width = max_x - min_x
     height = max_y - min_y
-    x_pixels = int(width * px_per_in)
-    y_pixels = int(height * px_per_in)
+    x_pixels = int(width * px_per_dm)
+    y_pixels = int(height * px_per_dm)
     
     # keep adding pixels until there are no doubles.  This is roughly
     # the smallest screen size that we can use.
@@ -41,9 +41,11 @@ def main():
         else:
             break
 
-    print('Width (in): {}'.format(width))
+    print('Width (dm): {}'.format(width))
+    print('Width (in): {}'.format(width / dm_per_in))
     print('Width (px): {}'.format(x_pixels))
-    print('Height (in): {}'.format(height))
+    print('Height (dm): {}'.format(height))
+    print('Height (in): {}'.format(height / dm_per_in))
     print('Width (px): {}'.format(y_pixels))
 
 

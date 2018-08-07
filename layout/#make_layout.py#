@@ -204,7 +204,7 @@ def convert_to_dev_layout(layout, dev_host, dev_port):
             strip += 1
             prod_strip = datum['strip']
         datum['strip'] = strip    
-        # scale back to inches for the simulator.
+        # scale up for the simulator
         datum['point'] = [p * 5 for p in datum['point']]
 
 

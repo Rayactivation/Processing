@@ -258,31 +258,3 @@ class Point:
 
 if __name__ == '__main__':
     sys.exit(main())
-
-
-    # layout = []
-    # for row in side:
-    #     y = row['Index'] * strip_spacing_dm + wing_offset
-    #     n_pixels = int(float(row['Length']) * px_per_dm)
-    #     for col in range(n_pixels + 1):
-    #         offset = col * dm_per_px
-    #         layout.append({'point': (left_start - offset, y, 0), 'strip': row['Index']})
-    #         layout.append({'point': (right_start + offset, y, 0), 'strip': row['Index']})
-
-    
-    # for fs, row in zip(front_starts, front):
-    #     x = 
-    #     n_pixels = int(float(row['Length']) * px_per_dm)
-    #     for col in range(n_pixels + 1):
-    #         y = midline - fs - col * dm_per_px
-    #         assert y >= 0, (y, fs, row)
-    #         layout.append((x, y, 0))
-
-        # for bs, row in zip(back_starts, back):
-        # x = back_x_start + (row['Index'] + 1) * strip_spacing_dm
-        # n_pixels = int(float(row['Length']) * px_per_dm)
-        # for col in range(n_pixels + 1):
-        #     # start at the midline and offset by one pixel
-        #     # so that we don't have overlap with the front
-        #     y = midline + dm_per_px + bs + col * dm_per_px
-        #     layout.append((x, y, 0))

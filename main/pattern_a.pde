@@ -6,7 +6,7 @@ class PatternA implements Pattern {
   
   void draw(){
     if (frameCount % 100 == 0) {
-      print("DRAW PATTERN A");
+      print("DRAW PATTERN A.");
     }
   }
 }

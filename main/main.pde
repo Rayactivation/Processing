@@ -31,9 +31,6 @@ void setup() {
 
   //OSC setup
   oscSetup();
-
-  //OPC setup
-  opcSetup();
 }
 
 void draw() {

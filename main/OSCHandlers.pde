@@ -1,13 +1,13 @@
 /*
 
-OSCHandler space
-
-Handlers for:
-- Heat cam
-- Animation secection controller
-- Ray position informaiton
-
-*/
+ OSCHandler space
+ 
+ Handlers for:
+ - Heat cam
+ - Animation secection controller
+ - Ray position informaiton
+ 
+ */
 
 
 import oscP5.*;
@@ -16,8 +16,8 @@ OscP5 oscP5tcpServer;
 
 int oscInputPort = 5000;
 
-void oscSetup(){
-   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
+void oscSetup() {
+  oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
 }
 
 void oscEvent(OscMessage theMessage) {
@@ -28,14 +28,13 @@ void oscEvent(OscMessage theMessage) {
     theMessage.print();
     println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
   }
-  
+
   if (theMessage.checkAddrPattern("/1/push1")) {
-     println("and it is a test message ");
+    println("and it is a test message ");
     theMessage.print();
-   // println("The first int is " + theMessage.get(0).intValue() );
- 
+    // println("The first int is " + theMessage.get(0).intValue() );
   }
-  
+
   //place holder pattern check example  - will delete
   //if (theMessage.checkAddrPattern("/camera/0")) {
   //  println("camera message is ");
@@ -44,5 +43,4 @@ void oscEvent(OscMessage theMessage) {
   //    //cameraVals[i] = theMessage.get(i % 8).intValue();
   //  }
   //}
-  
 }

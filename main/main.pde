@@ -19,9 +19,11 @@ void setup() {
     // TODO: read this in from a command line argument
     ArrayList<OPC> opcs;
     if (PROD) {
-      opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
+    //  opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
+      opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/layout.json", 80);
     } else {
-      opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
+      //opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
+      opcs = setupOpc("Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
     }
     for (OPC opc : opcs) {
       opc.showLocations(false);

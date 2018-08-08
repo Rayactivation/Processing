@@ -39,8 +39,6 @@ void draw() {
 }
 
 
-
-
 void keyPressed() {
   /* check how many clients are connected to the server. */
   println(oscP5tcpServer.tcpServer().getClients().length);

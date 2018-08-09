@@ -48,8 +48,8 @@ void setup() {
   patternClasses.add(ColorEmittingBar.class);
   patternClasses.add(RandomLinearBalls.class);
   patternClasses.add(RandomEbb.class);
-  patternClasses.add(PatternA.class);
-  patternClasses.add(PatternB.class);
+  //patternClasses.add(PatternA.class);
+  //patternClasses.add(PatternB.class);
 
   println("patternClasses size is " + patternClasses.size());
 

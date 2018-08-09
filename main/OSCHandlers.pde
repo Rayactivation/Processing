@@ -1,14 +1,13 @@
 /*
-
  OSCHandler space
  
  Handlers for:
  - Heat cam
  - Animation secection controller
  - Ray position informaiton
- 
+ - Paramater tweaking
+   -heat came threshold
  */
-
 
 import oscP5.*;
 import netP5.*;
@@ -22,19 +21,37 @@ void oscSetup() {
 
 void oscEvent(OscMessage theMessage) {
   /* in this example, both the server and the client share this oscEvent method */
-  System.out.println("### got a message " + theMessage);
-  if (theMessage.checkAddrPattern("/test")) {
-    println("and it is a test message ");
-    theMessage.print();
-    println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
+ // System.out.println("### got a message " + theMessage);
+  
+  if (theMessage.checkAddrPattern("/cameraHeatVal")) {
+    println("Heat Val is " + theMessage.get(0).intValue());
+    //theMessage.print();
+    // println("The first int is " + theMessage.get(0).intValue() );
   }
 
   if (theMessage.checkAddrPattern("/1/push1")) {
     println("and it is a test message ");
-    theMessage.print();
+   // theMessage.print();
     // println("The first int is " + theMessage.get(0).intValue() );
   }
+  
+  
+  
+  
+}
 
+  
+  
+  
+  
+  
+  
+    //if (theMessage.checkAddrPattern("/test")) {
+  //  println("and it is a test message ");
+  //  theMessage.print();
+  //  println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
+  //}
+  
   //place holder pattern check example  - will delete
   //if (theMessage.checkAddrPattern("/camera/0")) {
   //  println("camera message is ");
@@ -43,4 +60,3 @@ void oscEvent(OscMessage theMessage) {
   //    //cameraVals[i] = theMessage.get(i % 8).intValue();
   //  }
   //}
-}

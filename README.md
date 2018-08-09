@@ -9,3 +9,4 @@ This project consists of the following
   * Ray location
   * Animation selector
 
+https://github.com/processing/processing/wiki/Running-without-a-Display

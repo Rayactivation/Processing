@@ -1,8 +1,9 @@
 //OSC support
 
 Pattern currentPattern;
-int nextPatternTime;
+int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
+final int patternSwitchTime = 5000;
 
 Boolean PROD = true;
 // set to null to pick a random pattern, otherwise this pattern will be picked each time
@@ -50,6 +51,8 @@ void setup() {
   patternClasses.add(PatternA.class);
   patternClasses.add(PatternB.class);
 
+  println("patternClasses size is " + patternClasses.size());
+
   //OSC setup
   oscSetup();
 }
@@ -71,17 +74,20 @@ void draw() {
 }
 
 void nextPattern() {
-  nextPatternTime = millis() + 5000;
+  nextPatternTime = millis() + patternSwitchTime;
   currentPattern = newPattern();
   currentPattern.setup();
 }
 
 Pattern newPattern() {
+  //println("patternClasses size is " + patternClasses.size());
   int idx;
   if (PATTERN == null) {
-    idx = int(random(0, patternClasses.size()));
+    idx = int(random( patternClasses.size()));
+    println("idx is " + idx);
   } else {
-    idx = PATTERN;
+    idx = int(random( patternClasses.size()));
+    println("idx is " + idx);
   }
   println("\nSelect new pattern", idx);
   try {

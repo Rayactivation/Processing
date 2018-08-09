@@ -86,7 +86,7 @@ Pattern newPattern() {
     idx = int(random( patternClasses.size()));
     println("idx is " + idx);
   } else {
-    idx = int(random( patternClasses.size()));
+    idx = (PATTERN + 1) % patternClasses.size();
     println("idx is " + idx);
   }
   println("\nSelect new pattern", idx);
@@ -102,6 +102,7 @@ Pattern newPattern() {
 Pattern constructNewPattern(int idx) throws Exception {
   // This piece of wonderful magic is from:
   // https://stackoverflow.com/a/31184583
+  PATTERN = idx;
   Class<?> sketchClass = Class.forName("main");
   Class<?> innerClass = patternClasses.get(idx);
 

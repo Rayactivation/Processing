@@ -4,9 +4,11 @@ Pattern currentPattern;
 int nextPatternTime;
 ArrayList<Class> patternClasses;
 
-Boolean PROD = false;
+Boolean PROD = true;
 // set to null to pick a random pattern, otherwise this pattern will be picked each time
 Integer PATTERN = 0;
+
+
 
 void setup() {
   frameRate(30);
@@ -19,7 +21,7 @@ void setup() {
     // TODO: read this in from a command line argument
     ArrayList<OPC> opcs;
     if (PROD) {
-    //  opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
+      //  opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
       //opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/layout.json", 80);
       opcs = setupOpc("/home/master/RayRepos/Processing/layout/layout.json", 80);
     } else {
@@ -56,9 +58,7 @@ void draw() {
   background(255);
   // Every 30 seconds, pick a new pattern
   if (millis() >= nextPatternTime) {
-    nextPatternTime = millis() + 30000;
-    currentPattern = newPattern();
-    currentPattern.setup();
+    nextPattern();
   }
   int startTime = millis();
   currentPattern.draw();
@@ -70,6 +70,11 @@ void draw() {
   }
 }
 
+void nextPattern() {
+  nextPatternTime = millis() + 5000;
+  currentPattern = newPattern();
+  currentPattern.setup();
+}
 
 Pattern newPattern() {
   int idx;

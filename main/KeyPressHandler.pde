@@ -7,3 +7,7 @@ void keyPressed() {
     nextPattern();
   }
 }
+
+void mouseClicked(){
+  nextPattern();
+}

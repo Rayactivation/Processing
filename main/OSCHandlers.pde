@@ -6,7 +6,7 @@
  - Animation secection controller
  - Ray position informaiton
  - Paramater tweaking
-   -heat came threshold
+ -heat came threshold
  */
 
 import oscP5.*;
@@ -15,48 +15,56 @@ OscP5 oscP5tcpServer;
 
 int oscInputPort = 5000;
 
+//these are global and are delcared here
+static int heatVal = 0;
+
 void oscSetup() {
   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
 }
 
 void oscEvent(OscMessage theMessage) {
-  /* in this example, both the server and the client share this oscEvent method */
- // System.out.println("### got a message " + theMessage);
-  
+  // System.out.println("### got a message " + theMessage);
+
+  //heat cam listener
   if (theMessage.checkAddrPattern("/cameraHeatVal")) {
-    println("Heat Val is " + theMessage.get(0).intValue());
-    //theMessage.print();
-    // println("The first int is " + theMessage.get(0).intValue() );
+     println("Heat Val is " + theMessage.get(0).intValue());
+    heatVal =  theMessage.get(0).intValue();
   }
 
-  if (theMessage.checkAddrPattern("/1/push1")) {
-    println("and it is a test message ");
-   // theMessage.print();
-    // println("The first int is " + theMessage.get(0).intValue() );
-  }
-  
-  
-  
-  
+  //position handler
+
+
+  //tempeature handler
+
+
+  //controller handler
+
+
+  //sprise handler
 }
 
-  
-  
-  
-  
-  
-  
-    //if (theMessage.checkAddrPattern("/test")) {
-  //  println("and it is a test message ");
-  //  theMessage.print();
-  //  println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
-  //}
-  
-  //place holder pattern check example  - will delete
-  //if (theMessage.checkAddrPattern("/camera/0")) {
-  //  println("camera message is ");
-  //  theMessage.print();
-  //  for ( int i = 0; i < 8; i ++) {
-  //    //cameraVals[i] = theMessage.get(i % 8).intValue();
-  //  }
-  //}
+
+
+
+
+//if (theMessage.checkAddrPattern("/1/push1")) {
+//  println("and it is a test message ");
+//  // theMessage.print();
+//  // println("The first int is " + theMessage.get(0).intValue() );
+//}
+
+
+//if (theMessage.checkAddrPattern("/test")) {
+//  println("and it is a test message ");
+//  theMessage.print();
+//  println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
+//}
+
+//place holder pattern check example  - will delete
+//if (theMessage.checkAddrPattern("/camera/0")) {
+//  println("camera message is ");
+//  theMessage.print();
+//  for ( int i = 0; i < 8; i ++) {
+//    //cameraVals[i] = theMessage.get(i % 8).intValue();
+//  }
+//}

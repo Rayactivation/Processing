@@ -3,12 +3,11 @@
 Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
-final int patternSwitchTime = 5000;
+final int patternSwitchTime =5 * 60 * 1000;
 
 Boolean PROD = true;
 // set to null to pick a random pattern, otherwise this pattern will be picked each time
 Integer PATTERN = 0;
-
 
 
 void setup() {
@@ -48,6 +47,10 @@ void setup() {
   patternClasses.add(ColorEmittingBar.class);
   patternClasses.add(RandomLinearBalls.class);
   patternClasses.add(RandomEbb.class);
+  patternClasses.add(TonyTest.class);
+  patternClasses.add(NickySpecial.class);
+  patternClasses.add(SpiralHue.class);
+
   //patternClasses.add(PatternA.class);
   //patternClasses.add(PatternB.class);
 
@@ -84,10 +87,10 @@ Pattern newPattern() {
   int idx;
   if (PATTERN == null) {
     idx = int(random( patternClasses.size()));
-    println("idx is " + idx);
+    //println("idx is " + idx);
   } else {
     idx = (PATTERN + 1) % patternClasses.size();
-    println("idx is " + idx);
+    //println("idx is " + idx);
   }
   println("\nSelect new pattern", idx);
   try {

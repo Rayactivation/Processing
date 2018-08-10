@@ -56,14 +56,37 @@ class PointWithTrail {
   LinkedList<VectorInGrid> vs;
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
-    this.hue = 0; //random(0, 360);
-    bar = new WalkingBar(new Point(width / 2, height / 2), new Slope(0), 75);
+    this.hue = random(0, 360);
+    bar = new WalkingBar(new Point(width / 2, height / 2), new Slope(random(0, 2*PI)), random(20, 150));
     this.velocity = 1;
     this.grid = grid;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.vs = new LinkedList<VectorInGrid>();
+    int start = millis();
     addNewVectors();
+    // Simulate for a while, without drawing, until we have filled the screen
+    // TODO
+    while (true) {
+      clearVectorGrid();
+      Iterator<VectorInGrid> iter = vs.iterator();
+      while (iter.hasNext()) {
+        VectorInGrid v = iter.next();
+        v.update();
+        v.draw();
+        if (v.hasLeftGrid()) {
+          iter.remove();
+        }
+      }
+      bar.walk();
+      hue = (hue + 1) % 360;
+      addNewVectors();
+      // Just a heuristic for having filled the grid
+      if (grid[0] != null && grid[gridWidth-1] != null && grid[gridWidth*gridHeight-1] != null) {
+        break;
+      }
+    }
+    println("Took ", millis() - start, "milliseconds to setup");
   }
 
   VectorInGrid randomVector(Point p, float hue, float theta) {

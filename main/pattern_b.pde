@@ -64,29 +64,32 @@ class PointWithTrail {
     this.gridHeight = gridHeight;
     this.vs = new LinkedList<VectorInGrid>();
     int start = millis();
-    addNewVectors();
     // Simulate for a while, without drawing, until we have filled the screen
-    // TODO
     while (true) {
-      clearVectorGrid();
-      Iterator<VectorInGrid> iter = vs.iterator();
-      while (iter.hasNext()) {
-        VectorInGrid v = iter.next();
-        v.update();
-        v.draw();
-        if (v.hasLeftGrid()) {
-          iter.remove();
-        }
-      }
-      bar.walk();
-      hue = (hue + 1) % 360;
-      addNewVectors();
+      populateGrid();
       // Just a heuristic for having filled the grid
       if (grid[0] != null && grid[gridWidth-1] != null && grid[gridWidth*gridHeight-1] != null) {
         break;
       }
     }
     println("Took ", millis() - start, "milliseconds to setup");
+  }
+
+  void populateGrid() {
+    clearVectorGrid();
+    bar.walk();
+    hue = (hue + 1) % 360;
+    addNewVectors();
+
+    Iterator<VectorInGrid> iter = vs.iterator();
+    while (iter.hasNext()) {
+      VectorInGrid v = iter.next();
+      v.update();
+      v.draw();
+      if (v.hasLeftGrid()) {
+        iter.remove();
+      }
+    }
   }
 
   VectorInGrid randomVector(Point p, float hue, float theta) {
@@ -145,17 +148,8 @@ class PointWithTrail {
   }
 
   void draw() {
+    populateGrid();
     background(0);
-    clearVectorGrid();
-    Iterator<VectorInGrid> iter = vs.iterator();
-    while (iter.hasNext()) {
-      VectorInGrid v = iter.next();
-      v.update();
-      v.draw();
-      if (v.hasLeftGrid()) {
-        iter.remove();
-      }
-    }
     loadPixels();
     for (int x = 0; x<width; x++) {
       for (int y = 0; y<height; y++) {
@@ -164,16 +158,11 @@ class PointWithTrail {
       }
     }
     updatePixels();
-
     // Draw two dots at the ends of the bar; this can help see how the bar is moving
     // and I've found that to be helpful to better understand what is going on.
     if (this.DEBUG) {
       bar.draw();
     }
-
-    bar.walk();
-    hue = (hue + 1) % 360;
-    addNewVectors();
   }
 }
 
@@ -208,9 +197,7 @@ class WalkingBar {
     len = reflect(len + lengthSpeed, 20, 150);
     baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
     baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
-    // This is not enough rotation change. I'd like to have something that changes direction
-    // fairly often, but doesn't spend much time around zero
-    //thetaSpeed = reflect(thetaSpeed + random(-.0005, .0005), -.02, .02);
+
     float maxRotationSpeed = 150.0/len * 0.01;
     float t = frameCount;// / frameRate;
     thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);

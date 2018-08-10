@@ -33,14 +33,9 @@ class ColorEmittingBar implements Pattern {
   }
 
   void draw() {
-    int start = millis();
     clear();
     for (PointWithTrail trail : trails) {
       trail.draw();
-    }
-    int end = millis();
-    if (end - start > 1000 / frameRate) {
-      print("Frame took too long");
     }
   }
 }

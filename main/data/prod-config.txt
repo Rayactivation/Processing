@@ -1,0 +1,11 @@
+# If true, patterns are picked randomly, otherwise they go in sequence
+randomPattern: true
+# maybe turn on some debug logging; right now nothing uses this
+debug: true
+# The full path to the layout file
+layoutFile: /Users/jobevers/projects/rayactivation/Processing/layout/layout.json
+# In production, this need to be 80, generally null for development
+# use -1 for null
+stripSize: 80
+# How long each pattern runs for, in seconds
+patternSwitchTime: 30

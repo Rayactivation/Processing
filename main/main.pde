@@ -1,45 +1,40 @@
-boolean PROD = false;
-// set to true to pick a random pattern, otherwise patterns will be picked sequentially
-boolean RANDOM_PATTERN;
-boolean DEBUG;
+// These values are set in the data/config.txt file
+//
+// If true, patterns are picked randomly, otherwise they go in sequence
+boolean randomPattern;
+// maybe turn on some debug logging; right now nothing uses this
+boolean debug;
+// The full path to the layout file
+String layoutFile;
+// In production, this need to be 80, generally null for development
+Integer stripSize = null;
+// How long each pattern runs for, in milliseconds
+int patternSwitchTime;
+
 
 Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
-int patternSwitchTime;
 int currentPatternIdx = -1;
+
 
 void setup() {
   frameRate(30);
   size(216, 144);
   //size(800, 600);
+  // TODO(JIE): I think that we should use RGB and colormaps
   colorMode(HSB, 360, 100, 100);  
   background(0);
 
-  if (PROD) {
-    RANDOM_PATTERN = true;
-    DEBUG = false;
-    patternSwitchTime = 30 * 1000; // 30 seconds
-  } else {
-    RANDOM_PATTERN = false;
-    DEBUG = true;
-    patternSwitchTime = 5 * 60 * 1000; // five minutes
-  }
+  configure();
+  debugPrint("Debug printing is enabled");
 
   try {
-    // TODO: read this in from a command line argument
-    ArrayList<OPC> opcs;
-    if (PROD) {
-      //opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
-      //opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/layout.json", 80);
-      opcs = setupOpc("/home/master/RayRepos/Processing/layout/layout.json", 80);
-    } else {
-      opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
-      //opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/dev_layout.json", null);
-      //opcs = setupOpc("/home/master/RayRepos/Processing/layout/dev_layout.json", null);
-    }
-    for (OPC opc : opcs) {
-      opc.showLocations(false);
+    ArrayList<OPC> opcs = setupOpc(layoutFile, stripSize);
+    if (!debug) {
+      for (OPC opc : opcs) {
+        opc.showLocations(false);
+      }
     }
   }
   catch (IOException e) {
@@ -69,6 +64,7 @@ void setup() {
   oscSetup();
 }
 
+
 void draw() {
   background(255);
   if (millis() >= nextPatternTime) {
@@ -84,10 +80,19 @@ void draw() {
   }
 }
 
+void debugPrint(String line) {
+  if (debug) {
+    println(line);  
+  }
+}
+
 void nextPattern() {
+  int startTime = millis();
   nextPatternTime = millis() + patternSwitchTime;
   currentPattern = newPattern();
   currentPattern.setup();
+  int endTime = millis();
+  debugPrint("Took " + (endTime - startTime) + " seconds to switch patterns"); 
 }
 
 Pattern newPattern() {
@@ -108,7 +113,7 @@ Pattern newPattern(Integer idx) {
 int pickNewPattern(Integer idx) {
   println("patternClasses size is " + patternClasses.size());
   if (idx == null) {
-    if (RANDOM_PATTERN) {
+    if (randomPattern) {
       idx = int(random(patternClasses.size()));
     } else {
       idx = (currentPatternIdx + 1) % patternClasses.size();

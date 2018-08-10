@@ -8,6 +8,6 @@ void keyPressed() {
   }
 }
 
-void mouseClicked(){
+void mouseClicked() {
   nextPattern();
 }

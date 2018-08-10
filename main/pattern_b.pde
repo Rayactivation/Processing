@@ -2,6 +2,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
 import org.hsluv.HUSLColorConverter;
+import org.javatuples.Pair;
 
 class PatternB implements Pattern {
   void setup() {
@@ -19,17 +20,16 @@ class PatternB implements Pattern {
  * away from it.
  *
  */
-// This is in massive need of refactoring!
 class ColorEmittingBar implements Pattern {
   LinkedList<PointWithTrail> trails;
-  Vector[] vectorGrid;
+  VectorWithColor[] vectorGrid;
 
   void setup() {
     //colorMode(RGB, 255, 255, 255);
     colorMode(HSB, 360, 100, 100);
-    vectorGrid = new Vector[(height + 2)*(width + 2)];
+    vectorGrid = new VectorWithColor[(height + 2)*(width + 2)];
     trails = new LinkedList<PointWithTrail>();
-    trails.add(new PointWithTrail(vectorGrid));
+    trails.add(new PointWithTrail(vectorGrid, width+2, height+2));
   }
 
   void draw() {
@@ -46,47 +46,29 @@ class ColorEmittingBar implements Pattern {
 }
 
 class PointWithTrail {
+  boolean DEBUG = false;
   float hue;
-  Point base;
-  Slope slope;
-  float length;
   float velocity;
-  Vector[] grid;
+  VectorWithColor[] grid;
+  int gridWidth;
+  int gridHeight;
+  WalkingBar bar;
   LinkedList<VectorInGrid> vs;
-  // TODO: are these used?
-  int nBalls;
-  int nBallsPerStep;
-  Triangle wave;
 
-  PointWithTrail(Vector[] grid) {
+  PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
     this.hue = 0; //random(0, 360);
-    this.base = new Point(width / 2, height / 2);
-    this.slope = new Slope(0);
-    this.length = 75;
+    bar = new WalkingBar(new Point(width / 2, height / 2), new Slope(0), 75);
     this.velocity = 1;
     this.grid = grid;
+    this.gridWidth = gridWidth;
+    this.gridHeight = gridHeight;
     this.vs = new LinkedList<VectorInGrid>();
     addNewVectors();
   }
 
   VectorInGrid randomVector(Point p, float hue, float theta) {
     // TODO: create some color maps and use that to get the color instead of "hue"
-    //
-    // Dammit, the HSLUV looks terrible :/
-    //double[] rgb = HUSLColorConverter.hsluvToRgb(new double[]{hue, 100, 50});
-    //print(rgb[0], rgb[1], rgb[2]);
-    //int x = 1/0;
-    //return new Vector(p.x, p.y, theta, velocity, color((int)(rgb[0] * 255), (int)(rgb[1]*255), (int)(rgb[2]*255)));
-
-    //float startHue = 160;
-    //float endHue = 260;
-    //float rate = ((endHue - startHue) / 180);
-    //if (hue < 180) {
-    //  hue = rate*hue + startHue;
-    //} else {
-    //  hue = -rate*hue + (endHue - startHue) + endHue;
-    //}
-    Vector v = new Vector(p.x, p.y, theta, velocity, color(hue, 100, 100));
+    VectorWithColor v = new VectorWithColor(p.x, p.y, theta, velocity, color(hue, 100, 100));
     return new VectorInGrid(v, this.grid);
   }
 
@@ -98,8 +80,8 @@ class PointWithTrail {
     x = x + 1;
     y = y + 1;
     //handle the common case (no interpolation) first
-    int idx = y*(width+2) + x;
-    Vector v = this.grid[idx];
+    int idx = y * this.gridWidth + x;
+    VectorWithColor v = this.grid[idx];
     if (v != null) {
       return v.c;
     }
@@ -108,10 +90,10 @@ class PointWithTrail {
       for (Point p : getNeighbors(level)) {
         int xx = x + (int)p.x;
         int yy = y + (int)p.y;
-        if (xx < 0 || yy < 0 || xx >= width + 2 || yy >= height + 2) {
+        if (xx < 0 || yy < 0 || xx >= this.gridWidth || yy >= this.gridHeight) {
           continue;
         }
-        idx = yy*(width+2) + xx;
+        idx = yy * this.gridWidth + xx;
         v = this.grid[idx];
         if (v != null) {
           return v.c;
@@ -122,29 +104,19 @@ class PointWithTrail {
     return color(0);
   }
 
+  /**
+   * Create new vectors based on the current position of the bar
+   */
   void addNewVectors() {
-    float startingTheta = slope.theta + PI/2;
-    Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
-    Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
-    for (float i=-length / 2; i < length / 2; i+=.5) {
-      Point pt = new Point(base.x + i * slope.dx, base.y + i * slope.dy);
-      vs.add(randomVector(pt, hue, startingTheta));
-      vs.add(randomVector(pt, hue, startingTheta + PI));
-    }
-    for (float offset=0; offset<PI; offset+=PI/180) {
-      vs.add(randomVector(end, hue, startingTheta + offset));
-      vs.add(randomVector(start, hue, startingTheta + PI + offset));
-      //break;
+    for (Pair<Point, Float> v : bar.vectors()) {
+      Point pt = v.getValue0();
+      float theta = v.getValue1();
+      vs.add(randomVector(pt, hue, theta));
     }
   }
 
-  // Be slightly bigger than the actual screen so that
-  // interpolation of missing pixels at the edge is easier
-  //
-  // TODO: make a "VectorGrid" so that converting from "pixel space"
-  //       to "vector space" is easier
   void clearVectorGrid() {
-    for (int i=0; i<(height+2)*(width+2); i++) {
+    for (int i=0; i<this.gridHeight*this.gridWidth; i++) {
       this.grid[i] = null;
     }
   }
@@ -170,34 +142,53 @@ class PointWithTrail {
     }
     updatePixels();
 
-    //Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
-    //Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
-    //fill(color(0, 0, 0));
-    //ellipse(start.x, start.y, 1, 1);
-    //fill(color(0, 0, 0));
-    //ellipse(end.x, end.y, 1, 1);
+    // Draw two dots at the ends of the bar; this can help see how the bar is moving
+    // and I've found that to be helpful to better understand what is going on.
+    if (this.DEBUG) {
+      bar.draw();
+    }
 
-    walk();
+    bar.walk();
     hue = (hue + 1) % 360;
     addNewVectors();
   }
+}
 
+class WalkingBar {
   float baseXSpeed = 0;
   float baseYSpeed = 0;
   float thetaSpeed = 0;
   float lengthSpeed = 0;
+  Point base;
+  Slope slope;
+  float len;
+
+  WalkingBar(Point base, Slope slope, float len) {
+    this.base = base;
+    this.slope = slope;
+    this.len = len;
+  }
+
+  void draw() {
+    Point start = new Point(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
+    Point end = new Point(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    fill(color(0, 0, 0));
+    ellipse(start.x, start.y, 1, 1);
+    fill(color(0, 0, 0));
+    ellipse(end.x, end.y, 1, 1);
+  }
 
   void walk() {
     base.x = reflect(base.x + baseXSpeed, 0, width);
     base.y = reflect(base.y + baseYSpeed, 0, height);
     slope.setTheta(slope.theta + thetaSpeed);
-    length = reflect(length + lengthSpeed, 20, 150);
+    len = reflect(len + lengthSpeed, 20, 150);
     baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
     baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
     // This is not enough rotation change. I'd like to have something that changes direction
     // fairly often, but doesn't spend much time around zero
     //thetaSpeed = reflect(thetaSpeed + random(-.0005, .0005), -.02, .02);
-    float maxRotationSpeed = 150.0/length * 0.01;
+    float maxRotationSpeed = 150.0/len * 0.01;
     float t = frameCount;// / frameRate;
     thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);
     lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
@@ -209,6 +200,23 @@ class PointWithTrail {
     //  25 : 0.1
     // Though, at really high speeds interesting things can happen
   }
+
+  List<Pair<Point, Float>> vectors() {
+    ArrayList<Pair<Point, Float>> result = new ArrayList<Pair<Point, Float>>(); 
+    float startingTheta = slope.theta + PI/2;
+    for (float i=-len / 2; i < len / 2; i+=.5) {
+      Point pt = new Point(base.x + i * slope.dx, base.y + i * slope.dy);
+      result.add(new Pair(pt, startingTheta));
+      result.add(new Pair(pt, startingTheta + PI));
+    }
+    Point start = new Point(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
+    Point end = new Point(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    for (float offset=0; offset<PI; offset+=PI/180) {
+      result.add(new Pair(end, startingTheta + offset));
+      result.add(new Pair(start, startingTheta + PI + offset));
+    }
+    return result;
+  }
 }
 
 // One idea is make Vectors have neighbors and if two neighbors get
@@ -216,9 +224,9 @@ class PointWithTrail {
 // between them. Then I wouldn't have to do much interpolation on the
 // pixels.  And I could make less vectors at the start.
 class VectorInGrid {
-  Vector v;
-  Vector[] grid;
-  VectorInGrid(Vector v, Vector[] grid) {
+  VectorWithColor v;
+  VectorWithColor[] grid;
+  VectorInGrid(VectorWithColor v, VectorWithColor[] grid) {
     this.v = v;
     // Our grid size is fixed for now.
     // TODO: allow for a more flexible grid size.
@@ -233,11 +241,7 @@ class VectorInGrid {
   void draw() {
     if (this.v.isOutOfBounds(1)) {
       return;
-    }
-    assert this.v.y + 1 >= 0: "y is too small";
-    assert this.v.y + 1 < height + 2: "y is too big"; 
-    assert this.v.x + 1 >= 0: "x is too small";
-    assert this.v.x + 1 < width + 2: "x is too big";    
+    }   
     // the vectors array is offset one, so our index needs to change
     this.grid[int(this.v.y + 1)*(width + 2) + int(this.v.x + 1)] = this.v;
   }

@@ -73,8 +73,8 @@ class RandomLinearBalls implements Pattern {
   }
 
   EllipseAtVector randomVector() {
-    Vector v = new Vector(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3),
-                          color(random(180, 270), random(70, 100), random(70, 100)));
+    VectorWithColor v = new VectorWithColor(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), 
+      color(random(180, 270), random(70, 100), random(70, 100)));
     return new EllipseAtVector(v);
   }
 
@@ -98,19 +98,33 @@ class RandomLinearBalls implements Pattern {
 }
 
 
+class VectorWithColor extends Vector {
+  color c;
+
+  VectorWithColor(float x, float y, float theta, float v, color c) {
+    super(x, y, theta, v);
+    this.c = c;
+  }
+}
+
 class Vector {
   float x;
   float y;
   float dx;
   float dy;
-  color c;
 
-  Vector(float x, float y, float theta, float v, color c) {
+  /**
+   * Construct a new vector
+   * x: current x position
+   * y: current y position
+   * theta: angle of movement
+   * v: velocity of movement
+   */
+  Vector(float x, float y, float theta, float v) {
     this.x = x;
     this.y = y;
-    this.dx = v*sin(theta);
-    this.dy = v*cos(theta);
-    this.c = c;
+    this.dx = v*cos(theta);
+    this.dy = v*sin(theta);
   }
 
   /**
@@ -126,26 +140,25 @@ class Vector {
    */
   boolean isOutOfBounds(int margin) {
     return (this.x < -margin || this.y < -margin ||
-            this.x >= width + margin || this.y >= height + margin);
+      this.x >= width + margin || this.y >= height + margin);
   }
   boolean isOutOfBounds() {
     return isOutOfBounds(0);
   }
-  
 }
 
 
 class EllipseAtVector {
-  Vector v;
+  VectorWithColor v;
   int diameter = 7;
-  EllipseAtVector(Vector v) {
+  EllipseAtVector(VectorWithColor v) {
     this.v = v;
   }
 
   void update() {
     this.v.update();
   }
-  
+
   void draw() {
     fill(this.v.c);
     stroke(this.v.c);

@@ -33,14 +33,9 @@ class ColorEmittingBar implements Pattern {
   }
 
   void draw() {
-    int start = millis();
     clear();
     for (PointWithTrail trail : trails) {
       trail.draw();
-    }
-    int end = millis();
-    if (end - start > 1000 / frameRate) {
-      print("Frame took too long");
     }
   }
 }
@@ -63,7 +58,6 @@ class PointWithTrail {
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.vs = new LinkedList<VectorInGrid>();
-    int start = millis();
     // Simulate for a while, without drawing, until we have filled the screen
     while (true) {
       populateGrid();
@@ -72,7 +66,6 @@ class PointWithTrail {
         break;
       }
     }
-    println("Took ", millis() - start, "milliseconds to setup");
   }
 
   void populateGrid() {

@@ -1,14 +1,13 @@
-//OSC support
+boolean PROD = false;
+// set to true to pick a random pattern, otherwise patterns will be picked sequentially
+boolean RANDOM_PATTERN;
+boolean DEBUG;
 
 Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
-final int patternSwitchTime =5 * 60 * 1000;
-
-Boolean PROD = true;
-// set to null to pick a random pattern, otherwise this pattern will be picked each time
-Integer PATTERN = 0;
-
+int patternSwitchTime;
+int currentPatternIdx = -1;
 
 void setup() {
   frameRate(30);
@@ -17,24 +16,34 @@ void setup() {
   colorMode(HSB, 360, 100, 100);  
   background(0);
 
+  if (PROD) {
+    RANDOM_PATTERN = true;
+    DEBUG = false;
+    patternSwitchTime = 30 * 1000; // 30 seconds
+  } else {
+    RANDOM_PATTERN = false;
+    DEBUG = true;
+    patternSwitchTime = 5 * 60 * 1000; // five minutes
+  }
+
   try {
     // TODO: read this in from a command line argument
     ArrayList<OPC> opcs;
     if (PROD) {
-      //  opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
+      //opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/layout.json", 80);
       //opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/layout.json", 80);
       opcs = setupOpc("/home/master/RayRepos/Processing/layout/layout.json", 80);
     } else {
-      //opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
+      opcs = setupOpc("/Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.json", null);
       //opcs = setupOpc("/home/tony/projects/RayRepos/Processing/layout/dev_layout.json", null);
-      opcs = setupOpc("/home/master/RayRepos/Processing/layout/dev_layout.json", null);
+      //opcs = setupOpc("/home/master/RayRepos/Processing/layout/dev_layout.json", null);
     }
     for (OPC opc : opcs) {
-      opc.showLocations(true);
+      opc.showLocations(false);
     }
   }
   catch (IOException e) {
-    print("File not found");
+    println("!!!!! Layout File not found !!!!!!");
     exit();
   }
 
@@ -62,7 +71,6 @@ void setup() {
 
 void draw() {
   background(255);
-  // Every 30 seconds, pick a new pattern
   if (millis() >= nextPatternTime) {
     nextPattern();
   }
@@ -83,16 +91,11 @@ void nextPattern() {
 }
 
 Pattern newPattern() {
-  //println("patternClasses size is " + patternClasses.size());
-  int idx;
-  if (PATTERN == null) {
-    idx = int(random( patternClasses.size()));
-    //println("idx is " + idx);
-  } else {
-    idx = (PATTERN + 1) % patternClasses.size();
-    //println("idx is " + idx);
-  }
-  println("\nSelect new pattern", idx);
+  return newPattern(null);
+}
+
+Pattern newPattern(Integer idx) {
+  idx = pickNewPattern(idx);
   try {
     return constructNewPattern(idx);
   }
@@ -102,10 +105,23 @@ Pattern newPattern() {
   }
 }
 
+int pickNewPattern(Integer idx) {
+  println("patternClasses size is " + patternClasses.size());
+  if (idx == null) {
+    if (RANDOM_PATTERN) {
+      idx = int(random(patternClasses.size()));
+    } else {
+      idx = (currentPatternIdx + 1) % patternClasses.size();
+    }
+  }
+  currentPatternIdx = idx;
+  println("\nSelect new pattern", idx);
+  return idx;
+}
+
 Pattern constructNewPattern(int idx) throws Exception {
   // This piece of wonderful magic is from:
   // https://stackoverflow.com/a/31184583
-  PATTERN = idx;
   Class<?> sketchClass = Class.forName("main");
   Class<?> innerClass = patternClasses.get(idx);
 

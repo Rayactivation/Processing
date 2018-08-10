@@ -61,30 +61,32 @@ class RandomEbb implements Pattern {
  * When the ball goes off the screen a new one is randomly created to take its place.
  */
 class RandomLinearBalls implements Pattern {
-  LinkedList<Vector> vs;
+  LinkedList<EllipseAtVector> vs;
 
   void setup() {
     // TODO: switch to HSB, 255, 255, 255
     colorMode(HSB, 360, 100, 100);
-    vs = new LinkedList<Vector>();
+    vs = new LinkedList<EllipseAtVector>();
     for (int i=0; i<300; i++) {
       vs.add(randomVector());
     }
   }
 
-  Vector randomVector() {
-    return new Vector(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), color(random(180, 270), random(70, 100), random(70, 100)));
+  EllipseAtVector randomVector() {
+    VectorWithColor v = new VectorWithColor(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), 
+      color(random(180, 270), random(70, 100), random(70, 100)));
+    return new EllipseAtVector(v);
   }
 
   void draw() {
     clear();
-    Iterator<Vector> iter = vs.iterator();
+    Iterator<EllipseAtVector> iter = vs.iterator();
     int removed = 0;
     while (iter.hasNext()) {
-      Vector v = iter.next();
+      EllipseAtVector v = iter.next();
       v.update();
       v.draw();
-      if (v.x < 0 || v.y < 0 || v.x > width || v.y > height) {
+      if (v.isOutOfBounds()) {
         iter.remove();
         removed += 1;
       }
@@ -96,29 +98,74 @@ class RandomLinearBalls implements Pattern {
 }
 
 
+class VectorWithColor extends Vector {
+  color c;
+
+  VectorWithColor(float x, float y, float theta, float v, color c) {
+    super(x, y, theta, v);
+    this.c = c;
+  }
+}
+
 class Vector {
   float x;
   float y;
   float dx;
   float dy;
-  color c;
 
-  Vector(float x, float y, float theta, float v, color c) {
+  /**
+   * Construct a new vector
+   * x: current x position
+   * y: current y position
+   * theta: angle of movement
+   * v: velocity of movement
+   */
+  Vector(float x, float y, float theta, float v) {
     this.x = x;
     this.y = y;
-    this.dx = v*sin(theta);
-    this.dy = v*cos(theta);
-    this.c = c;
+    this.dx = v*cos(theta);
+    this.dy = v*sin(theta);
   }
 
+  /**
+   * Update the vector's location
+   */
   void update() {
     this.x += this.dx;
     this.y += this.dy;
   }
 
+  /**
+   * Checks if the vector is still on the screen.
+   */
+  boolean isOutOfBounds(int margin) {
+    return (this.x < -margin || this.y < -margin ||
+      this.x >= width + margin || this.y >= height + margin);
+  }
+  boolean isOutOfBounds() {
+    return isOutOfBounds(0);
+  }
+}
+
+
+class EllipseAtVector {
+  VectorWithColor v;
+  int diameter = 7;
+  EllipseAtVector(VectorWithColor v) {
+    this.v = v;
+  }
+
+  void update() {
+    this.v.update();
+  }
+
   void draw() {
-    fill(this.c);
-    stroke(this.c);
-    ellipse(this.x, this.y, 7, 7);
+    fill(this.v.c);
+    stroke(this.v.c);
+    ellipse(this.v.x, this.v.y, this.diameter, this.diameter);
+  }
+
+  boolean isOutOfBounds() {
+    return this.v.isOutOfBounds();
   }
 }

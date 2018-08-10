@@ -21,11 +21,9 @@ class PhoneTest implements Pattern {
   void setup() {    
     colorMode(HSB);
     println("In PhoneTest");
-    
   }
 
   void draw() {
-
   }
 }
 

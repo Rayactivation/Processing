@@ -1,0 +1,4 @@
+#!/bin/sh
+
+pkill Xvfb
+xvfb-run /opt/processing-3.3.7/processing-java --sketch=/home/master/RayRepos/Processing/main  --run

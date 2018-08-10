@@ -1,0 +1,16 @@
+[Unit]
+Description=Ray Service 
+StartLimitIntervalSec=0
+
+[Service]
+User=master
+WorkingDirectory=/home/master/RayRepos/Processing/main
+ExecStart=/home/master/RayRepos/Processing/main/rayService
+SuccessExitStatus=143
+3TimeoutStopSec=10
+Restart=always
+#Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

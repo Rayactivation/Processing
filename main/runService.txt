@@ -1,0 +1,8 @@
+sudo systemctl daemon-reload
+sudo systemctl enable ray.service
+sudo systemctl start
+sudo systemctl status
+
+copy ray.service to /etc/systemd/system
+
+

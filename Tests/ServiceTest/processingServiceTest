@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#xvfb-run /opt/processing-3.3.7/processing-java --sketch=/home/master/RayRepos/Processing/main  --run
+xvfb-run /opt/processing-3.3.7/processing-java --sketch=/home/master/RayRepos/Processing/Tests/ServiceTest  --run

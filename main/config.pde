@@ -1,7 +1,7 @@
+
 void configure() {
   HashMap<String, String> map = loadConfig("config.txt");
-  randomPattern = map.get("randomPattern").toLowerCase() == "true";
-  debug = map.get("debug").toLowerCase() == "true";
+  randomPattern = boolean(map.get("randomPattern").toLowerCase());
   layoutFile = map.get("layoutFile");
   Integer rawStripSize = int(map.get("stripSize"));
   stripSize = rawStripSize <=0 ? null : rawStripSize;

@@ -58,7 +58,6 @@ class PointWithTrail {
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.vs = new LinkedList<VectorInGrid>();
-    int start = millis();
     // Simulate for a while, without drawing, until we have filled the screen
     while (true) {
       populateGrid();
@@ -67,7 +66,6 @@ class PointWithTrail {
         break;
       }
     }
-    println("Took ", millis() - start, "milliseconds to setup");
   }
 
   void populateGrid() {

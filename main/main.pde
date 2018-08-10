@@ -2,8 +2,6 @@
 //
 // If true, patterns are picked randomly, otherwise they go in sequence
 boolean randomPattern;
-// maybe turn on some debug logging; right now nothing uses this
-boolean debug;
 // The full path to the layout file
 String layoutFile;
 // In production, this need to be 80, generally null for development
@@ -27,14 +25,11 @@ void setup() {
   background(0);
 
   configure();
-  debugPrint("Debug printing is enabled");
 
   try {
     ArrayList<OPC> opcs = setupOpc(layoutFile, stripSize);
-    if (!debug) {
-      for (OPC opc : opcs) {
-        opc.showLocations(false);
-      }
+    for (OPC opc : opcs) {
+      opc.showLocations(false);
     }
   }
   catch (IOException e) {
@@ -80,11 +75,6 @@ void draw() {
   }
 }
 
-void debugPrint(String line) {
-  if (debug) {
-    println(line);  
-  }
-}
 
 void nextPattern() {
   int startTime = millis();
@@ -92,7 +82,7 @@ void nextPattern() {
   currentPattern = newPattern();
   currentPattern.setup();
   int endTime = millis();
-  debugPrint("Took " + (endTime - startTime) + " seconds to switch patterns"); 
+  println("Took " + (endTime - startTime) + " milliseconds to switch patterns");
 }
 
 Pattern newPattern() {

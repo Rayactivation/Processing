@@ -19,18 +19,17 @@ class PatternB implements Pattern {
  * away from it.
  *
  */
+// This is in massive need of refactoring!
 class ColorEmittingBar implements Pattern {
-  float velocity;
   LinkedList<PointWithTrail> trails;
-  VectorB[] vectors;
+  Vector[] vectorGrid;
 
   void setup() {
     //colorMode(RGB, 255, 255, 255);
     colorMode(HSB, 360, 100, 100);
-    velocity = 1;
-    vectors = new VectorB[(height + 2)*(width + 2)];
+    vectorGrid = new Vector[(height + 2)*(width + 2)];
     trails = new LinkedList<PointWithTrail>();
-    trails.add(new PointWithTrail());
+    trails.add(new PointWithTrail(vectorGrid));
   }
 
   void draw() {
@@ -44,8 +43,35 @@ class ColorEmittingBar implements Pattern {
       print("Frame took too long");
     }
   }
+}
 
-  VectorB randomVector(Point p, float hue, float theta) {
+class PointWithTrail {
+  float hue;
+  Point base;
+  Slope slope;
+  float length;
+  float velocity;
+  Vector[] grid;
+  LinkedList<VectorInGrid> vs;
+  // TODO: are these used?
+  int nBalls;
+  int nBallsPerStep;
+  Triangle wave;
+
+  PointWithTrail(Vector[] grid) {
+    this.hue = 0; //random(0, 360);
+    this.base = new Point(width / 2, height / 2);
+    this.slope = new Slope(0);
+    this.length = 75;
+    this.velocity = 1;
+    this.grid = grid;
+    this.vs = new LinkedList<VectorInGrid>();
+    addNewVectors();
+  }
+
+  VectorInGrid randomVector(Point p, float hue, float theta) {
+    // TODO: create some color maps and use that to get the color instead of "hue"
+    //
     // Dammit, the HSLUV looks terrible :/
     //double[] rgb = HUSLColorConverter.hsluvToRgb(new double[]{hue, 100, 50});
     //print(rgb[0], rgb[1], rgb[2]);
@@ -60,16 +86,20 @@ class ColorEmittingBar implements Pattern {
     //} else {
     //  hue = -rate*hue + (endHue - startHue) + endHue;
     //}
-
-    return new VectorB(p.x, p.y, theta, velocity, color(hue, 100, 100));
+    Vector v = new Vector(p.x, p.y, theta, velocity, color(hue, 100, 100));
+    return new VectorInGrid(v, this.grid);
   }
 
+  /**
+   * For pixel at (x,y) this function searches for the closest vector
+   * and returns the color of that vector.
+   */
   color interpolate(int x, int y) {
     x = x + 1;
     y = y + 1;
     //handle the common case (no interpolation) first
     int idx = y*(width+2) + x;
-    VectorB v = vectors[idx];
+    Vector v = this.grid[idx];
     if (v != null) {
       return v.c;
     }
@@ -82,7 +112,7 @@ class ColorEmittingBar implements Pattern {
           continue;
         }
         idx = yy*(width+2) + xx;
-        v = vectors[idx];
+        v = this.grid[idx];
         if (v != null) {
           return v.c;
         }
@@ -91,138 +121,134 @@ class ColorEmittingBar implements Pattern {
     }
     return color(0);
   }
-  /* One idea is make Vectors have neighbors and if two neighbors get
-   too far apart (like > 1 pixel) then a new vector is created halfway
-   between them. Then I wouldn't have to do much interpolation on the pixels.
-   and I could make less vectors at the start
-   */
-  class VectorB {
-    float x;
-    float y;
-    float dx;
-    float dy;
-    color c;
 
-    VectorB(float x, float y, float theta, float v, color c) {
-      this.x = x;
-      this.y = y;
-      this.dx = v*cos(theta);
-      this.dy = v*sin(theta);
-      this.c = c;
+  void addNewVectors() {
+    float startingTheta = slope.theta + PI/2;
+    Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
+    Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
+    for (float i=-length / 2; i < length / 2; i+=.5) {
+      Point pt = new Point(base.x + i * slope.dx, base.y + i * slope.dy);
+      vs.add(randomVector(pt, hue, startingTheta));
+      vs.add(randomVector(pt, hue, startingTheta + PI));
     }
-
-    void update() {
-      this.x += this.dx;
-      this.y += this.dy;
-    }
-
-    void draw() {
-      if (this.x < -1 || this.y < -1 || this.x >= width + 1 || this.y >= height + 1) {
-        return;
-      }
-      // the vectors array is offset one, so our index needs to change
-      vectors[int(this.y + 1)*(width + 2) + int(this.x + 1)] = this;
+    for (float offset=0; offset<PI; offset+=PI/180) {
+      vs.add(randomVector(end, hue, startingTheta + offset));
+      vs.add(randomVector(start, hue, startingTheta + PI + offset));
+      //break;
     }
   }
 
-  class PointWithTrail {
-    LinkedList<VectorB> vs;
-    float length;
-    Point base;
-    Slope slope;
-    int nBalls;
-    int nBallsPerStep;
-    float hue;
-    Triangle wave;
-
-    PointWithTrail() {
-      hue = 0; //random(0, 360);
-      base = new Point(width / 2, height / 2);
-      slope = new Slope(0);
-      length = 75;
-      vs = new LinkedList<VectorB>();
-      addNewVectors();
+  // Be slightly bigger than the actual screen so that
+  // interpolation of missing pixels at the edge is easier
+  //
+  // TODO: make a "VectorGrid" so that converting from "pixel space"
+  //       to "vector space" is easier
+  void clearVectorGrid() {
+    for (int i=0; i<(height+2)*(width+2); i++) {
+      this.grid[i] = null;
     }
+  }
 
-    void addNewVectors() {
-      float startingTheta = slope.theta + PI/2;
-      Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
-      Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
-      for (float i=-length / 2; i < length / 2; i+=.5) {
-        Point pt = new Point(base.x + i * slope.dx, base.y + i * slope.dy);
-        vs.add(randomVector(pt, hue, startingTheta));
-        vs.add(randomVector(pt, hue, startingTheta + PI));
-      }
-      for (float offset=0; offset<PI; offset+=PI/180) {
-        vs.add(randomVector(end, hue, startingTheta + offset));
-        vs.add(randomVector(start, hue, startingTheta + PI + offset));
-        //break;
+  void draw() {
+    background(0);
+    clearVectorGrid();
+    Iterator<VectorInGrid> iter = vs.iterator();
+    while (iter.hasNext()) {
+      VectorInGrid v = iter.next();
+      v.update();
+      v.draw();
+      if (v.hasLeftGrid()) {
+        iter.remove();
       }
     }
-
-    void draw() {
-      background(0);
-      // Be slightly bigger than the actual screen so that
-      // interpolation of missing pixels at the edge is easier
-      vectors = new VectorB[(height + 2)*(width+2)];
-      Iterator<VectorB> iter = vs.iterator();
-      while (iter.hasNext()) {
-        VectorB v = iter.next();
-        v.update();
-        v.draw();
-        // The vector coordinates are in terms of the screen
-        // And we want to keep one extra vector around the edge
-        if ((v.x < -1 && v.dx < 0) ||
-          (v.y < -1 && v.dy < 0) ||
-          (v.x >= width + 1 && v.dx > 0) ||
-          (v.y >= height + 1 && v.dy > 0)) {
-          iter.remove();
-        }
+    loadPixels();
+    for (int x = 0; x<width; x++) {
+      for (int y = 0; y<height; y++) {
+        int idx = y*width + x;
+        pixels[idx] = interpolate(x, y);
       }
-      loadPixels();
-      for (int x = 0; x<width; x++) {
-        for (int y = 0; y<height; y++) {
-          int idx = y*width + x;
-          pixels[idx] = interpolate(x, y);
-        }
-      }
-      updatePixels();
-
-      //Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
-      //Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
-      //fill(color(0, 0, 0));
-      //ellipse(start.x, start.y, 1, 1);
-      //fill(color(0, 0, 0));
-      //ellipse(end.x, end.y, 1, 1);
-
-      walk();
-      hue = (hue + 1) % 360;
-      addNewVectors();
     }
+    updatePixels();
 
+    //Point start = new Point(base.x + length / 2 * slope.dx, base.y + length / 2 * slope.dy);
+    //Point end = new Point(base.x - length / 2 * slope.dx, base.y - length / 2 * slope.dy);
+    //fill(color(0, 0, 0));
+    //ellipse(start.x, start.y, 1, 1);
+    //fill(color(0, 0, 0));
+    //ellipse(end.x, end.y, 1, 1);
 
-    void walk() {
-      base.x = reflect(base.x + baseXSpeed, 0, width);
-      base.y = reflect(base.y + baseYSpeed, 0, height);
-      slope.setTheta(slope.theta + thetaSpeed);
-      length = reflect(length + lengthSpeed, 20, 150);
-      baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
-      baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
-      // This is not enough rotation change. I'd like to have something that changes direction
-      // fairly often, but doesn't spend much time around zero
-      //thetaSpeed = reflect(thetaSpeed + random(-.0005, .0005), -.02, .02);
-      float maxRotationSpeed = 150.0/length * 0.01;
-      float t = frameCount;// / frameRate;
-      thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);
-      lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
-      // There is a relationship between length and maximum rotation speed
-      // Lenght : Max Speed
-      // 150 : 0.01
-      // 100 : 0.02
-      //  50 : 0.04
-      //  25 : 0.1
-      // Though, at really high speeds interesting things can happen
+    walk();
+    hue = (hue + 1) % 360;
+    addNewVectors();
+  }
+
+  float baseXSpeed = 0;
+  float baseYSpeed = 0;
+  float thetaSpeed = 0;
+  float lengthSpeed = 0;
+
+  void walk() {
+    base.x = reflect(base.x + baseXSpeed, 0, width);
+    base.y = reflect(base.y + baseYSpeed, 0, height);
+    slope.setTheta(slope.theta + thetaSpeed);
+    length = reflect(length + lengthSpeed, 20, 150);
+    baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
+    baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
+    // This is not enough rotation change. I'd like to have something that changes direction
+    // fairly often, but doesn't spend much time around zero
+    //thetaSpeed = reflect(thetaSpeed + random(-.0005, .0005), -.02, .02);
+    float maxRotationSpeed = 150.0/length * 0.01;
+    float t = frameCount;// / frameRate;
+    thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);
+    lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
+    // There is a relationship between length and maximum rotation speed
+    // Lenght : Max Speed
+    // 150 : 0.01
+    // 100 : 0.02
+    //  50 : 0.04
+    //  25 : 0.1
+    // Though, at really high speeds interesting things can happen
+  }
+}
+
+// One idea is make Vectors have neighbors and if two neighbors get
+// too far apart (like > 1 pixel) then a new vector is created halfway
+// between them. Then I wouldn't have to do much interpolation on the
+// pixels.  And I could make less vectors at the start.
+class VectorInGrid {
+  Vector v;
+  Vector[] grid;
+  VectorInGrid(Vector v, Vector[] grid) {
+    this.v = v;
+    // Our grid size is fixed for now.
+    // TODO: allow for a more flexible grid size.
+    assert grid.length == (width + 2) * (height + 2);
+    this.grid = grid;
+  }
+
+  void update() {
+    this.v.update();
+  }
+
+  void draw() {
+    if (this.v.isOutOfBounds(1)) {
+      return;
     }
+    assert this.v.y + 1 >= 0: "y is too small";
+    assert this.v.y + 1 < height + 2: "y is too big"; 
+    assert this.v.x + 1 >= 0: "x is too small";
+    assert this.v.x + 1 < width + 2: "x is too big";    
+    // the vectors array is offset one, so our index needs to change
+    this.grid[int(this.v.y + 1)*(width + 2) + int(this.v.x + 1)] = this.v;
+  }
+
+  // The vector coordinates are in terms of the screen
+  // And we want to keep one extra vector around the edge
+  boolean hasLeftGrid() {
+    return (v.x < -1 && v.dx < 0) ||
+      (v.y < -1 && v.dy < 0) ||
+      (v.x >= width + 1 && v.dx > 0) ||
+      (v.y >= height + 1 && v.dy > 0);
   }
 }
 
@@ -273,11 +299,7 @@ class Triangle implements Wave {
   }
 }
 
-Point center;
-float baseXSpeed = 0;
-float baseYSpeed = 0;
-float thetaSpeed = 0;
-float lengthSpeed = 0;
+//Point center;
 
 private static final int[][] NEIGHBORS = {
   {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
@@ -293,16 +315,6 @@ IntList getLevelOrder(int level) {
     result.append(i);
   }
   return result;
-  //result.append(0);
-  //int offset = level;
-  //while (offset > 0) {
-  //  result.append(offset);
-  //  offset *= -1;
-  //  if (offset >= 0) {
-  //    offset--;
-  //  }
-  //}
-  //return result;
 }
 
 List<Point> getNeighbors(int level) {
@@ -316,7 +328,6 @@ List<Point> getNeighbors(int level) {
       result.add(new Point(x, y));
     }
   }
-  //if (level > 1) { print(level, "\n"); }
   return result;
 }
 
@@ -329,4 +340,3 @@ float reflect(float val, float min, float max) {
     return val;
   }
 }
-///////////////

@@ -16,6 +16,19 @@ class TonyTest implements Pattern {
   }
 }
 
+//take XY from phone screen and draw on Ray
+class PhoneTest implements Pattern {
+  void setup() {    
+    colorMode(HSB);
+    println("In PhoneTest");
+    
+  }
+
+  void draw() {
+
+  }
+}
+
 
 //something about being orange
 class NickySpecial implements Pattern {

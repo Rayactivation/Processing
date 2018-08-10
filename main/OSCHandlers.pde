@@ -24,6 +24,7 @@ void oscSetup() {
 
 void oscEvent(OscMessage theMessage) {
   System.out.println("### got a message " + theMessage);
+  theMessage.print();
 
   //heat cam listener
   if (theMessage.checkAddrPattern("/cameraHeatVal")) {
@@ -38,7 +39,7 @@ void oscEvent(OscMessage theMessage) {
 
 
   //controller handler - from my phone with custom touch OSC layout
-  if (theMessage.checkAddrPattern("/nextAnimation/nextAnimation")) {
+  if (theMessage.checkAddrPattern("/control/nextAnimation")) {
     //theMessage.print();
     if ( theMessage.get(0).floatValue() == 0) {
       println("Next animation ");

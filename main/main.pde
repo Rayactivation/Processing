@@ -54,17 +54,17 @@ void setup() {
   patternClasses.add(XYControlDraw.class);
   patternClasses.add(XYControlDot.class);
   patternClasses.add(Diamonds.class);
-  
+  patternClasses.add(ImageLoadFire.class);
 
 
-  //patternClasses.add(PatternA.class);
-  //patternClasses.add(PatternB.class);
+    //patternClasses.add(PatternA.class);
+    //patternClasses.add(PatternB.class);
 
-  println("patternClasses size is " + patternClasses.size());
+    println("patternClasses size is " + patternClasses.size());
 
   //OSC setup
   oscSetup();
-  
+
   oscHandlerQueue = new OscHandlerQueue();
 }
 
@@ -92,7 +92,7 @@ void nextPattern() {
   oscHandlerQueue.newQueue();
   currentPattern.setup();
   int endTime = millis();
-  
+
   println("Took " + (endTime - startTime) + " milliseconds to switch patterns");
 }
 

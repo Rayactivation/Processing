@@ -51,6 +51,8 @@ void setup() {
   patternClasses.add(TonyTest.class);
   patternClasses.add(NickySpecial.class);
   patternClasses.add(SpiralHue.class);
+  patternClasses.add(XYControlDot.class);
+
 
   //patternClasses.add(PatternA.class);
   //patternClasses.add(PatternB.class);

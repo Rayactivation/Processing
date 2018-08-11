@@ -17,14 +17,15 @@ int oscInputPort = 5000;
 
 //these are global and are delcared here
 static int heatVal = 0;
+static int xControl, yControl = 0;
 
 void oscSetup() {
   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
 }
 
 void oscEvent(OscMessage theMessage) {
-  System.out.println("### got a message " + theMessage);
-  theMessage.print();
+  //System.out.println("### got a message " + theMessage);
+  //theMessage.print();
 
   //heat cam listener
   if (theMessage.checkAddrPattern("/cameraHeatVal")) {
@@ -46,6 +47,15 @@ void oscEvent(OscMessage theMessage) {
       nextPattern();
     }
   }
+
+  //controller handler - from my phone with custom touch OSC layout
+  if (theMessage.checkAddrPattern("/control/touch")) {
+    //theMessage.print();
+    xControl = int(theMessage.get(0).floatValue() * 100);
+    yControl = int(theMessage.get(1).floatValue() * 100);
+    println( xControl + " " + yControl);
+  }
+
 
   //suprise handler
 }

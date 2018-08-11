@@ -17,16 +17,36 @@ class TonyTest implements Pattern {
 }
 
 //take XY from phone screen and draw on Ray
-class PhoneTest implements Pattern {
+class XYControlDraw implements Pattern {
+  
+  ArrayList<PVector> points;
+  
   void setup() {    
     colorMode(HSB);
-    println("In PhoneTest");
+    println("In XYControl");
+    
   }
 
   void draw() {
+    
   }
 }
+//take XY from phone screen and draw on Ray
+class XYControlDot implements Pattern {
+  
+  ArrayList<PVector> points;
+  
+  void setup() {    
+    colorMode(HSB);
+    println("In XYControl");
+    
+  }
 
+  void draw() {
+    fill(30, 100, 100);
+    ellipse(xControl, yControl, 10,10);
+  }
+}
 
 //something about being orange
 class NickySpecial implements Pattern {

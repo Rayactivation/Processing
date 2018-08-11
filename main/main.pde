@@ -9,6 +9,8 @@ Integer stripSize = null;
 // How long each pattern runs for, in milliseconds
 int patternSwitchTime;
 
+boolean showLocations = false;
+
 
 Pattern currentPattern;
 int nextPatternTime = 0;
@@ -29,7 +31,7 @@ void setup() {
   try {
     ArrayList<OPC> opcs = setupOpc(layoutFile, stripSize);
     for (OPC opc : opcs) {
-      opc.showLocations(false);
+      opc.showLocations(true);
     }
   }
   catch (IOException e) {

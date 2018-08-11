@@ -9,3 +9,4 @@ layoutFile: /Users/jobevers/projects/rayactivation/Processing/layout/dev_layout.
 stripSize: -1
 # How long each pattern runs for, in seconds
 patternSwitchTime: 30
+showLocations: false

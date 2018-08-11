@@ -18,33 +18,44 @@ class TonyTest implements Pattern {
 
 //take XY from phone screen and draw on Ray
 class XYControlDraw implements Pattern {
-  
+
   ArrayList<PVector> points;
-  
+
   void setup() {    
     colorMode(HSB);
-    println("In XYControl");
-    
+    println("In XYControl Draw");
+    oscHandlerQueue.enable();
+    println("OCS handler enable: " + oscHandlerQueue.isAvalible());
+    points = new ArrayList<PVector>();
   }
 
   void draw() {
-    
+    if ( oscHandlerQueue.isAvalible()) {
+      PVector p = oscHandlerQueue.pop();
+      p.x =map(p.x, 0, 100, 0, width);
+      p.y =map(p.y, 0, 100, 0, height);
+      points.add(p);
+    }
+
+    int i = 0;
+    for (PVector p : points) {
+      fill(i % 360, 100, 100);
+      ellipse(p.x, p.y, 5, 5);
+      i+= 5;
+    }
   }
 }
+
 //take XY from phone screen and draw on Ray
 class XYControlDot implements Pattern {
-  
   ArrayList<PVector> points;
-  
   void setup() {    
     colorMode(HSB);
-    println("In XYControl");
-    
+    println("In XYControlDot");
   }
-
   void draw() {
     fill(30, 100, 100);
-    ellipse(xControl, yControl, 10,10);
+    ellipse(map(xControl, 0, 100, 0, width), map(yControl, 0, 100, 0, height), 10, 10);
   }
 }
 

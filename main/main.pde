@@ -16,7 +16,7 @@ Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
 int currentPatternIdx = -1;
-
+OscHandlerQueue oscHandlerQueue;
 
 void setup() {
   frameRate(30);
@@ -51,6 +51,7 @@ void setup() {
   patternClasses.add(TonyTest.class);
   patternClasses.add(NickySpecial.class);
   patternClasses.add(SpiralHue.class);
+  patternClasses.add(XYControlDraw.class);
   patternClasses.add(XYControlDot.class);
 
 
@@ -61,6 +62,8 @@ void setup() {
 
   //OSC setup
   oscSetup();
+  
+  oscHandlerQueue = new OscHandlerQueue();
 }
 
 
@@ -84,8 +87,10 @@ void nextPattern() {
   int startTime = millis();
   nextPatternTime = millis() + patternSwitchTime;
   currentPattern = newPattern();
+  oscHandlerQueue.newQueue();
   currentPattern.setup();
   int endTime = millis();
+  
   println("Took " + (endTime - startTime) + " milliseconds to switch patterns");
 }
 

@@ -19,6 +19,8 @@ int oscInputPort = 5000;
 static int heatVal = 0;
 static int xControl, yControl = 0;
 
+
+
 void oscSetup() {
   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
 }
@@ -53,7 +55,10 @@ void oscEvent(OscMessage theMessage) {
     //theMessage.print();
     xControl = int(theMessage.get(0).floatValue() * 100);
     yControl = int(theMessage.get(1).floatValue() * 100);
-    println( xControl + " " + yControl);
+    //println( xControl + " " + yControl);
+    if (oscHandlerQueue.isEnabled() == true) {
+      oscHandlerQueue.push(xControl, yControl);
+    }
   }
 
 
@@ -61,27 +66,42 @@ void oscEvent(OscMessage theMessage) {
 }
 
 
+class OscHandlerQueue {
 
+  ArrayList<PVector> queue;
 
+  boolean enabled;
 
-//if (theMessage.checkAddrPattern("/1/push1")) {
-//  println("and it is a test message ");
-//  // theMessage.print();
-//  // println("The first int is " + theMessage.get(0).intValue() );
-//}
+  OscHandlerQueue() {
+  }
 
+  void newQueue() {
+    enabled = false;
+    queue = new ArrayList<PVector>();
+    println("New OscQueue");
+  }
 
-//if (theMessage.checkAddrPattern("/test")) {
-//  println("and it is a test message ");
-//  theMessage.print();
-//  println("The first int is " + theMessage.get(0).intValue() + " \nand the second int is " + theMessage.get(1).intValue());
-//}
+  void enable() {
+    enabled = true;
+    //    println("OscQueue enabled");
+  }
 
-//place holder pattern check example  - will delete
-//if (theMessage.checkAddrPattern("/camera/0")) {
-//  println("camera message is ");
-//  theMessage.print();
-//  for ( int i = 0; i < 8; i ++) {
-//    //cameraVals[i] = theMessage.get(i % 8).intValue();
-//  }
-//}
+  void push(int x, int y) {
+    queue.add(new PVector(x, y));
+    println("Adding to OscQueue");
+  }
+
+  boolean isEnabled() {
+    return enabled;
+  }
+
+  boolean isAvalible() {
+    return ( queue.size() == 0  ? false : true);
+  }
+
+  PVector pop() {
+    PVector p = queue.get(0);
+    queue.remove(0);
+    return p;
+  }
+}

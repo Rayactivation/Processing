@@ -96,7 +96,7 @@ class Diamonds implements Pattern {
       fill((inc + i ) % 360, 100, 100);
       stroke((inc + i ) % 360, 100, 100);
       rect( 0,0, i, i);
-      print(center.x + " " + center.y);
+      //print(center.x + " " + center.y);
     }
     popMatrix();
   }
@@ -181,31 +181,5 @@ class SpiralHue implements Pattern {
       rotate(PI/180 * rotateValue);
       ellipse(0, i/4, 1, 1);
     }
-  }
-}
-
-
-class Timer {
-  int startTime;
-  int elapsedTime;
-  int timeBase;
-
-  Timer(int timeBase) {
-    this.timeBase = timeBase;
-    startTime = millis();
-  }
-
-  boolean check() {
-    if (millis() - startTime >= timeBase) {
-      startTime = millis();
-      return true;
-    } 
-    return false;
-  }
-  void timeUp() {
-    timeBase+=2;
-  }
-  void timeDown() {
-    timeBase-=2;
   }
 }

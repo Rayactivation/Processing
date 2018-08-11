@@ -23,3 +23,29 @@ int incByte(int hue) {
 int incByte(int hue, int delta) {
   return (hue + delta) & 0xFF;
 }
+
+
+class Timer {
+  int startTime;
+  int elapsedTime;
+  int timeBase;
+
+  Timer(int timeBase) {
+    this.timeBase = timeBase;
+    startTime = millis();
+  }
+
+  boolean check() {
+    if (millis() - startTime >= timeBase) {
+      startTime = millis();
+      return true;
+    } 
+    return false;
+  }
+  void timeUp() {
+    timeBase+=2;
+  }
+  void timeDown() {
+    timeBase-=2;
+  }
+}

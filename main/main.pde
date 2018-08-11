@@ -53,6 +53,8 @@ void setup() {
   patternClasses.add(SpiralHue.class);
   patternClasses.add(XYControlDraw.class);
   patternClasses.add(XYControlDot.class);
+  patternClasses.add(Diamonds.class);
+  
 
 
   //patternClasses.add(PatternA.class);

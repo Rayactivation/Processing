@@ -1,3 +1,18 @@
+/*
+
+ Pattern Ideas
+ Noinput
+ - dimonds that progress outward from the center
+ -lepord spots
+ 
+ Input
+ -Two controlled ball that explode when they hit
+ 
+ 
+ 
+ */
+
+
 //simple test pattern that uses a value from the heat camera to chaneg the color of the circle
 class TonyTest implements Pattern {
 
@@ -56,6 +71,34 @@ class XYControlDot implements Pattern {
   void draw() {
     fill(30, 100, 100);
     ellipse(map(xControl, 0, 100, 0, width), map(yControl, 0, 100, 0, height), 10, 10);
+  }
+}
+
+class Diamonds implements Pattern {
+
+  PVector center;
+  int inc;
+
+  void setup() {
+    colorMode(HSB);
+    println("In Diamond");
+    center = new PVector(width / 2, height / 2);
+    inc = 1;
+    rectMode(CENTER);
+  }
+
+  void draw() {
+    inc++;
+    pushMatrix();
+    translate(center.x, center.y);
+    rotate(PI / 4);
+    for ( int i = width; i > 0; i--) {
+      fill((inc + i ) % 360, 100, 100);
+      stroke((inc + i ) % 360, 100, 100);
+      rect( 0,0, i, i);
+      print(center.x + " " + center.y);
+    }
+    popMatrix();
   }
 }
 

@@ -98,56 +98,6 @@ class RandomLinearBalls implements Pattern {
 }
 
 
-class VectorWithColor extends Vector {
-  color c;
-
-  VectorWithColor(float x, float y, float theta, float v, color c) {
-    super(x, y, theta, v);
-    this.c = c;
-  }
-}
-
-class Vector {
-  float x;
-  float y;
-  float dx;
-  float dy;
-
-  /**
-   * Construct a new vector
-   * x: current x position
-   * y: current y position
-   * theta: angle of movement
-   * v: velocity of movement
-   */
-  Vector(float x, float y, float theta, float v) {
-    this.x = x;
-    this.y = y;
-    this.dx = v*cos(theta);
-    this.dy = v*sin(theta);
-  }
-
-  /**
-   * Update the vector's location
-   */
-  void update() {
-    this.x += this.dx;
-    this.y += this.dy;
-  }
-
-  /**
-   * Checks if the vector is still on the screen.
-   */
-  boolean isOutOfBounds(int margin) {
-    return (this.x < -margin || this.y < -margin ||
-      this.x >= width + margin || this.y >= height + margin);
-  }
-  boolean isOutOfBounds() {
-    return isOutOfBounds(0);
-  }
-}
-
-
 class EllipseAtVector {
   VectorWithColor v;
   int diameter = 7;

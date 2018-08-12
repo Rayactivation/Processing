@@ -5,6 +5,8 @@ class ImageLoadFire implements Pattern {
     print("In image loader");
     im = loadImage("flames.jpeg");
   }
+  void cleanup() {
+  };
 
   void draw() {
     int imHeight = im.height * width / im.width;
@@ -13,7 +15,7 @@ class ImageLoadFire implements Pattern {
     float y = (millis() * -speed) % imHeight;
 
     // Use two copies of the image, so it seems to repeat infinitely  
-   
+
     image(im, 0, y, width, imHeight);
     image(im, 0, y + imHeight, width, imHeight);
   }

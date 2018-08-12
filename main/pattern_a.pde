@@ -11,6 +11,9 @@ class PatternA implements Pattern {
       print("DRAW PATTERN A.");
     }
   }
+
+  void cleanup() {
+  }
 }
 
 /* Populates the screen with random colors
@@ -22,18 +25,22 @@ class PatternA implements Pattern {
 // wheel, like, what if it was just shades of blue?
 class RandomEbb implements Pattern {
   int[] hues;
+  Colormap cm;
 
   void setup() {
     colorMode(HSB);
     hues = new int[width * height];
     int hue = 0;
+    cm = getColormap("hsi");
     loadPixels();
     for (int i = 0; i < width * height; i++) {
-      hue = int(random(0, 360));
-      pixels[i] = color(hue, 255, 255);
+      hue = int(random(0, 256));
+      pixels[i] = cm.getColor(hue);
       hues[i] = hue;
     }
     updatePixels();
+  }
+  void cleanup() {
   }
 
   void draw() {
@@ -49,7 +56,7 @@ class RandomEbb implements Pattern {
       }
       hue = incByte(hues[i], delta);
       hues[i] = hue;
-      pixels[i] = color(hue, 255, 255);
+      pixels[i] = cm.getColor(hue);
     }
     updatePixels();
   }
@@ -62,19 +69,21 @@ class RandomEbb implements Pattern {
  */
 class RandomLinearBalls implements Pattern {
   LinkedList<EllipseAtVector> vs;
+  Colormap cm;
 
   void setup() {
-    // TODO: switch to HSB, 255, 255, 255
-    colorMode(HSB, 360, 100, 100);
+    cm = getColormap("hsi");
     vs = new LinkedList<EllipseAtVector>();
     for (int i=0; i<300; i++) {
       vs.add(randomVector());
     }
   }
+  void cleanup() {
+  }
 
   EllipseAtVector randomVector() {
-    VectorWithColor v = new VectorWithColor(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), 
-      color(random(180, 270), random(70, 100), random(70, 100)));
+    color c = cm.getColor(randomByte());
+    VectorWithColor v = new VectorWithColor(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), c);
     return new EllipseAtVector(v);
   }
 

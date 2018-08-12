@@ -12,6 +12,7 @@ class PatternB implements Pattern {
       print("DRAW PATTERN B.");
     }
   }
+  void cleanup(){}
 }
 
 ///////////////
@@ -31,6 +32,7 @@ class ColorEmittingBar implements Pattern {
     trails = new LinkedList<PointWithTrail>();
     trails.add(new PointWithTrail(vectorGrid, width+2, height+2));
   }
+  void cleanup(){}
 
   void draw() {
     clear();

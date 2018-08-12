@@ -23,6 +23,7 @@ class TonyTest implements Pattern {
     println("In tony test");
     i = 0;
   }
+  void cleanup(){}
 
   void draw() {
     // i = (i + heatVal) % 360;
@@ -43,6 +44,7 @@ class XYControlDraw implements Pattern {
     println("OCS handler enable: " + oscHandlerQueue.isAvalible());
     points = new ArrayList<PVector>();
   }
+  void cleanup(){}
 
   void draw() {
     if ( oscHandlerQueue.isAvalible()) {
@@ -61,6 +63,9 @@ class XYControlDraw implements Pattern {
   }
 }
 
+
+
+
 //take XY from phone screen and draw on Ray
 class XYControlDot implements Pattern {
   ArrayList<PVector> points;
@@ -68,6 +73,7 @@ class XYControlDot implements Pattern {
     colorMode(HSB);
     println("In XYControlDot");
   }
+  void cleanup(){}
   void draw() {
     fill(30, 100, 100);
     ellipse(map(xControl, 0, 100, 0, width), map(yControl, 0, 100, 0, height), 10, 10);
@@ -86,6 +92,7 @@ class Diamonds implements Pattern {
     inc = 1;
     rectMode(CENTER);
   }
+  void cleanup(){}
 
   void draw() {
     inc++;
@@ -115,6 +122,7 @@ class NickySpecial implements Pattern {
     i = 0;
     startSize = 50;
   }
+  void cleanup(){}
 
   void draw() {
     i = (i + 1) % 360;
@@ -152,6 +160,7 @@ class SpiralHue implements Pattern {
       cords[i] = i;
     }
   }
+  void cleanup(){}
 
   void draw() {
     background(0, 0, 0);

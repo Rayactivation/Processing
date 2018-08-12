@@ -6,6 +6,7 @@ import net.markenwerk.utils.lrucache.LruCache;
 interface Pattern {
   void setup();
   void draw();
+  void cleanup();
 }
 
 class Point {
@@ -111,13 +112,17 @@ interface Colormap {
   color getColor(int val);
 }
 
+
+// Other ideas for color maps:
+//  - slice (take a slice and then interpolate). This way you can have
+//    blues, reds, oranges, etc.
 class ArrayColormap implements Colormap {
   color[] arr;
   ArrayColormap (color[] arr) {
-    this.arr = arr;  
+    this.arr = arr;
   }
   color getColor(int val) {
-    return this.arr[val];  
+    return this.arr[val];
   }
 }
 
@@ -134,11 +139,15 @@ Colormap readColormap(String name) {
   color[] arr = new color[256];
   Table table = loadTable(name + ".csv", "header");
   int rowCount = 0;
-  for (TableRow row : table.rows()){
+  for (TableRow row : table.rows()) {
     color c = color(row.getInt(0), row.getInt(1), row.getInt(2));
     arr[rowCount] = c;
     rowCount++;
   }
   assert rowCount == 255;
   return new ArrayColormap(arr);
+}
+
+int randomByte() {
+  return int(random(0, 256));  
 }

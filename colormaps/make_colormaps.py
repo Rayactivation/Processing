@@ -3,6 +3,8 @@ import math
 import os
 import sys
 
+import numpy as np
+
 
 DATA = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'main', 'data'))
 assert os.path.exists(DATA)
@@ -41,6 +43,12 @@ def main():
     with open(os.path.join(DATA, 'hsi.csv'), 'w') as fin:
         writer = csv.writer(fin)
         for i in range(256):
+            writer.writerow(hsi2rgb(i, 1, 1))
+    with open(os.path.join(DATA, 'blue.csv'), 'w') as fin:
+        writer = csv.writer(fin)
+        for i in np.linspace(128, 192, 128):
+            writer.writerow(hsi2rgb(i, 1, 1))
+        for i in np.linspace(192, 128, 128):
             writer.writerow(hsi2rgb(i, 1, 1))
 
 

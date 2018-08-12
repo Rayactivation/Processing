@@ -22,8 +22,8 @@ void setup() {
   frameRate(30);
   size(216, 144);
   //size(800, 600);
-  // TODO(JIE): I think that we should use RGB and colormaps
-  colorMode(HSB, 360, 100, 100);  
+  // Patterns can switch the colorMode, but they shou
+  colorMode(RGB, 255, 255, 255);
   background(0);
 
   configure();
@@ -57,10 +57,10 @@ void setup() {
   patternClasses.add(ImageLoadFire.class);
 
 
-    //patternClasses.add(PatternA.class);
-    //patternClasses.add(PatternB.class);
+  //patternClasses.add(PatternA.class);
+  //patternClasses.add(PatternB.class);
 
-    println("patternClasses size is " + patternClasses.size());
+  println("patternClasses size is " + patternClasses.size());
 
   //OSC setup
   oscSetup();
@@ -72,6 +72,11 @@ void setup() {
 void draw() {
   background(255);
   if (millis() >= nextPatternTime) {
+    if (currentPattern != null) {
+      currentPattern.cleanup();
+    }
+    // Reset the color mode in case some pattern misbehaved
+    colorMode(RGB, 255, 255, 255);
     nextPattern();
   }
   int startTime = millis();

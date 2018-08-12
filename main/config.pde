@@ -19,7 +19,6 @@ HashMap<String, String> loadConfig(String filename) {
     String[] kv = split(line, ":");
     String key = trim(kv[0]);
     String value = trim(kv[1]);
-    println(key + "  " + value);
     map.put(key, value);
   } 
   return map;

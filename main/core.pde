@@ -9,6 +9,7 @@ interface Pattern {
   void cleanup();
 }
 
+// TODO: Remove this and use PVector
 class Point {
   float x;
   float y;
@@ -19,6 +20,7 @@ class Point {
   }
 }
 
+// TODO: rename this!
 class Vector {
   float x;
   float y;
@@ -149,5 +151,5 @@ Colormap readColormap(String name) {
 }
 
 int randomByte() {
-  return int(random(0, 256));  
+  return int(random(0, 256));
 }

@@ -57,10 +57,10 @@ void setup() {
   patternClasses.add(ImageLoadFire.class);
 
 
-    //patternClasses.add(PatternA.class);
-    //patternClasses.add(PatternB.class);
+  //patternClasses.add(PatternA.class);
+  //patternClasses.add(PatternB.class);
 
-    println("patternClasses size is " + patternClasses.size());
+  println("patternClasses size is " + patternClasses.size());
 
   //OSC setup
   oscSetup();

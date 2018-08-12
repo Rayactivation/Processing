@@ -1,4 +1,4 @@
-import net.markenwerk.utils.LruCache;
+import net.markenwerk.utils.lrucache.LruCache;
 
 /**
  * This is the main interface that all of the patterns need to implement
@@ -111,7 +111,34 @@ interface Colormap {
   color getColor(int val);
 }
 
-Map<String, Colormap> cache = new LruCache<String, Colormap>(cacheSize);
+class ArrayColormap implements Colormap {
+  color[] arr;
+  ArrayColormap (color[] arr) {
+    this.arr = arr;  
+  }
+  color getColor(int val) {
+    return this.arr[val];  
+  }
+}
+
+Map<String, Colormap> cache = new LruCache<String, Colormap>(10);
 Colormap getColormap(String name) {
+  if (!cache.containsKey(name)) {
+    Colormap cm = readColormap(name);
+    cache.put(name, cm);
+  }
   return cache.get(name);
+}
+
+Colormap readColormap(String name) {
+  color[] arr = new color[256];
+  Table table = loadTable(name + ".csv", "header");
+  int rowCount = 0;
+  for (TableRow row : table.rows()){
+    color c = color(row.getInt(0), row.getInt(1), row.getInt(2));
+    arr[rowCount] = c;
+    rowCount++;
+  }
+  assert rowCount == 255;
+  return new ArrayColormap(arr);
 }

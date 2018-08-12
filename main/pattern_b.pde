@@ -23,10 +23,10 @@ class PatternB implements Pattern {
 class ColorEmittingBar implements Pattern {
   LinkedList<PointWithTrail> trails;
   VectorWithColor[] vectorGrid;
+  Colormap cm;
 
   void setup() {
-    //colorMode(RGB, 255, 255, 255);
-    colorMode(HSB, 360, 100, 100);
+    colorMode(RGB, 255, 255, 255);
     vectorGrid = new VectorWithColor[(height + 2)*(width + 2)];
     trails = new LinkedList<PointWithTrail>();
     trails.add(new PointWithTrail(vectorGrid, width+2, height+2));
@@ -42,18 +42,20 @@ class ColorEmittingBar implements Pattern {
 
 class PointWithTrail {
   boolean DEBUG = false;
-  float hue;
+  int hue;
   float velocity;
   VectorWithColor[] grid;
   int gridWidth;
   int gridHeight;
   WalkingBar bar;
   LinkedList<VectorInGrid> vs;
+  Colormap cm;
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
-    this.hue = random(0, 360);
+    this.hue = int(random(0, 256));
     bar = new WalkingBar(new Point(width / 2, height / 2), new Slope(random(0, 2*PI)), random(20, 150));
     this.velocity = 1;
+    this.cm = getColormap("hsi");
     this.grid = grid;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
@@ -71,7 +73,7 @@ class PointWithTrail {
   void populateGrid() {
     clearVectorGrid();
     bar.walk();
-    hue = (hue + 1) % 360;
+    hue = incByte(hue);
     addNewVectors();
 
     Iterator<VectorInGrid> iter = vs.iterator();
@@ -85,9 +87,9 @@ class PointWithTrail {
     }
   }
 
-  VectorInGrid randomVector(Point p, float hue, float theta) {
+  VectorInGrid randomVector(Point p, float theta) {
     // TODO: create some color maps and use that to get the color instead of "hue"
-    VectorWithColor v = new VectorWithColor(p.x, p.y, theta, velocity, color(hue, 100, 100));
+    VectorWithColor v = new VectorWithColor(p.x, p.y, theta, velocity, cm.getColor(this.hue));
     return new VectorInGrid(v, this.grid);
   }
 
@@ -130,7 +132,7 @@ class PointWithTrail {
     for (Pair<Point, Float> v : bar.vectors()) {
       Point pt = v.getValue0();
       float theta = v.getValue1();
-      vs.add(randomVector(pt, hue, theta));
+      vs.add(randomVector(pt, theta));
     }
   }
 

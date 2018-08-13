@@ -11,7 +11,6 @@ int patternSwitchTime;
 // On the screen display, show the location of the ray
 boolean showLocations = false;
 
-
 Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
@@ -46,6 +45,7 @@ void setup() {
   // I usually have to restart the processing application when
   // that happens
   patternClasses = new ArrayList<Class>();
+  patternClasses.add(TestColorTransition.class);
   patternClasses.add(LeftRight.class);
   patternClasses.add(UpDown.class);
   patternClasses.add(ColorEmittingBar.class);

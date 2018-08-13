@@ -127,3 +127,36 @@ class EllipseAtVector {
     return this.v.isOutOfBounds();
   }
 }
+
+class TestColorTransition implements Pattern {
+  ColorTransition t;
+  void setup() {
+    colorMode(RGB, 255, 255, 255);
+    t = new ColorTransition(0);
+  }
+  void cleanup() {
+  }
+  void draw() {
+    colorMode(RGB, 255, 255, 255);
+    background(t.update());
+    drawGrid();
+  }
+
+  void drawGrid() {
+    // Draw a grid of all 32 brightness levels
+    int brightness = 0;
+    for (int x=width/8; x<width; x+=width/9) {
+      for (int y=height/4; y<height; y+=height/5) {
+        if (brightness >= MAX_BRIGHTNESS) {
+          break;
+        }
+        int intensity = BRIGHTNESS[brightness];
+        color c = hsi2rgb(t.hue, 255, intensity);
+        fill(c);
+        noStroke();
+        ellipse(x, y, 10, 10);
+        brightness++;
+      }
+    }
+  }
+}

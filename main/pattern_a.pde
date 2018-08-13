@@ -28,13 +28,12 @@ class RandomEbb implements Pattern {
   Colormap cm;
 
   void setup() {
-    colorMode(HSB);
     hues = new int[width * height];
     int hue = 0;
     cm = getColormap("hsi");
     loadPixels();
     for (int i = 0; i < width * height; i++) {
-      hue = int(random(0, 256));
+      hue = randomByte();
       pixels[i] = cm.getColor(hue);
       hues[i] = hue;
     }
@@ -50,7 +49,7 @@ class RandomEbb implements Pattern {
       int delta;
       if ((frameCount % 60) < 10) {
         // Ocassionaly add in some small bits of randomness
-        delta = int(random(1, 3));
+        delta = int(random(1, 4));
       } else {
         delta = 2;
       }

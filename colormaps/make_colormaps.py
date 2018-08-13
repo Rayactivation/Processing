@@ -36,7 +36,10 @@ def hsi2rgb(h, s=1, i=1):
     else:
         h = h - 4 * math.pi / 3
         b, r, g = hsi2rgb_region(h, s, i)
-    return r, g, b, (r+g+b)/3
+    assert 0 <= r <= 255
+    assert 0 <= g <= 255
+    assert 0 <= g <= 255
+    return r, g, b
 
 
 def main():

@@ -31,7 +31,7 @@ ArrayList<OPC> setupOpc(String jsonLayoutFile, Integer stripSize) throws IOExcep
   JsonArray arr = new JsonParser().parse(layoutJson).getAsJsonArray();
 
   // Map from OPC -> Strip -> Pixels
-  HashMap<Pair<String, Integer>, TreeMap<Integer, ArrayList<Point>>> pointsByHostPort = new HashMap<Pair<String, Integer>, TreeMap<Integer, ArrayList<Point>>>();
+  HashMap<Pair<String, Integer>, TreeMap<Integer, ArrayList<PVector>>> pointsByHostPort = new HashMap<Pair<String, Integer>, TreeMap<Integer, ArrayList<PVector>>>();
   float min_x = Float.MAX_VALUE;
   float min_y = Float.MAX_VALUE;
   float max_x = 0;
@@ -41,17 +41,17 @@ ArrayList<OPC> setupOpc(String jsonLayoutFile, Integer stripSize) throws IOExcep
     Pair<String, Integer> hp = new Pair<String, Integer>(o.get("host").getAsString(), o.get("port").getAsInt());
 
     if (!pointsByHostPort.containsKey(hp)) {
-      pointsByHostPort.put(hp, new TreeMap<Integer, ArrayList<Point>>());
+      pointsByHostPort.put(hp, new TreeMap<Integer, ArrayList<PVector>>());
     }
-    TreeMap<Integer, ArrayList<Point>> pointsByStrip = pointsByHostPort.get(hp);
+    TreeMap<Integer, ArrayList<PVector>> pointsByStrip = pointsByHostPort.get(hp);
     Integer strip = o.get("strip").getAsInt();
     if (!pointsByStrip.containsKey(strip)) {
-      pointsByStrip.put(strip, new ArrayList<Point>());
+      pointsByStrip.put(strip, new ArrayList<PVector>());
     }
-    List<Point> points = pointsByStrip.get(strip);
+    List<PVector> points = pointsByStrip.get(strip);
 
     JsonArray point = o.get("point").getAsJsonArray();
-    Point pt = new Point(point.get(0).getAsFloat(), point.get(1).getAsFloat());
+    PVector pt = new PVector(point.get(0).getAsFloat(), point.get(1).getAsFloat());
     points.add(pt); 
     min_x = min(pt.x, min_x);
     min_y = min(pt.y, min_y);
@@ -64,15 +64,15 @@ ArrayList<OPC> setupOpc(String jsonLayoutFile, Integer stripSize) throws IOExcep
   for (Pair<String, Integer> hp : pointsByHostPort.keySet()) {
     opcByHostPort.put(hp, new OPC(this, hp.getValue0(), hp.getValue1()));
   }
-  for (Map.Entry<Pair<String, Integer>, TreeMap<Integer, ArrayList<Point>>> item : pointsByHostPort.entrySet()) {
+  for (Map.Entry<Pair<String, Integer>, TreeMap<Integer, ArrayList<PVector>>> item : pointsByHostPort.entrySet()) {
     OPC opc = opcByHostPort.get(item.getKey());
     results.add(opc);
-    TreeMap<Integer, ArrayList<Point>> pointsByStrip = item.getValue();
+    TreeMap<Integer, ArrayList<PVector>> pointsByStrip = item.getValue();
     int idx = 0;
     for (Integer strip : pointsByStrip.keySet()) {
-      ArrayList<Point> points = pointsByStrip.get(strip);
+      ArrayList<PVector> points = pointsByStrip.get(strip);
       for (int i=0; i<points.size(); i++) {
-        Point pt = points.get(i);
+        PVector pt = points.get(i);
         int x = int((pt.x - min_x) * (width - 1) / layout_width);
         int y = int((pt.y - min_y) * (height - 1) / layout_height);
         assert 0 <= x && x < width;

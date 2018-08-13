@@ -57,7 +57,7 @@ class PointWithTrail {
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
     this.hue = int(random(0, 256));
-    bar = new WalkingBar(new Point(width / 2, height / 2), new Slope(random(0, 2*PI)), random(20, 150));
+    bar = new WalkingBar(new PVector(width / 2, height / 2), new Slope(random(0, 2*PI)), random(20, 150));
     this.velocity = 1;
     this.cm = getColormap("hsi");
     this.grid = grid;
@@ -91,7 +91,7 @@ class PointWithTrail {
     }
   }
 
-  VectorInGrid randomVector(Point p, float theta) {
+  VectorInGrid randomVector(PVector p, float theta) {
     // TODO: create some color maps and use that to get the color instead of "hue"
     VectorWithColor v = new VectorWithColor(p.x, p.y, theta, velocity, cm.getColor(this.hue));
     return new VectorInGrid(v, this.grid);
@@ -112,7 +112,7 @@ class PointWithTrail {
     }
     int level = 1;
     while (level <= 1) {
-      for (Point p : getNeighbors(level)) {
+      for (PVector p : getNeighbors(level)) {
         int xx = x + (int)p.x;
         int yy = y + (int)p.y;
         if (xx < 0 || yy < 0 || xx >= this.gridWidth || yy >= this.gridHeight) {
@@ -133,8 +133,8 @@ class PointWithTrail {
    * Create new vectors based on the current position of the bar
    */
   void addNewVectors() {
-    for (Pair<Point, Float> v : bar.vectors()) {
-      Point pt = v.getValue0();
+    for (Pair<PVector, Float> v : bar.vectors()) {
+      PVector pt = v.getValue0();
       float theta = v.getValue1();
       vs.add(randomVector(pt, theta));
     }
@@ -170,19 +170,19 @@ class WalkingBar {
   float baseYSpeed = 0;
   float thetaSpeed = 0;
   float lengthSpeed = 0;
-  Point base;
+  PVector base;
   Slope slope;
   float len;
 
-  WalkingBar(Point base, Slope slope, float len) {
+  WalkingBar(PVector base, Slope slope, float len) {
     this.base = base;
     this.slope = slope;
     this.len = len;
   }
 
   void draw() {
-    Point start = new Point(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
-    Point end = new Point(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    PVector start = new PVector(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
+    PVector end = new PVector(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
     fill(color(0, 0, 0));
     ellipse(start.x, start.y, 1, 1);
     fill(color(0, 0, 0));
@@ -210,16 +210,16 @@ class WalkingBar {
     // Though, at really high speeds interesting things can happen
   }
 
-  List<Pair<Point, Float>> vectors() {
-    ArrayList<Pair<Point, Float>> result = new ArrayList<Pair<Point, Float>>(); 
+  List<Pair<PVector, Float>> vectors() {
+    ArrayList<Pair<PVector, Float>> result = new ArrayList<Pair<PVector, Float>>(); 
     float startingTheta = slope.theta + PI/2;
     for (float i=-len / 2; i < len / 2; i+=.5) {
-      Point pt = new Point(base.x + i * slope.dx, base.y + i * slope.dy);
+      PVector pt = new PVector(base.x + i * slope.dx, base.y + i * slope.dy);
       result.add(new Pair(pt, startingTheta));
       result.add(new Pair(pt, startingTheta + PI));
     }
-    Point start = new Point(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
-    Point end = new Point(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    PVector start = new PVector(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
+    PVector end = new PVector(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
     for (float offset=0; offset<PI; offset+=PI/180) {
       result.add(new Pair(end, startingTheta + offset));
       result.add(new Pair(start, startingTheta + PI + offset));
@@ -312,7 +312,6 @@ class Triangle implements Wave {
   }
 }
 
-//Point center;
 
 private static final int[][] NEIGHBORS = {
   {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
@@ -330,15 +329,15 @@ IntList getLevelOrder(int level) {
   return result;
 }
 
-List<Point> getNeighbors(int level) {
+List<PVector> getNeighbors(int level) {
   assert level >= 1;
-  List<Point> result = new ArrayList<Point>();
+  List<PVector> result = new ArrayList<PVector>();
   for (int x : getLevelOrder(level)) {
     for (int y : getLevelOrder(level)) {
       if (abs(x) != level && abs(y) != level) {
         continue;
       }
-      result.add(new Point(x, y));
+      result.add(new PVector(x, y));
     }
   }
   return result;

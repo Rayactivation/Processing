@@ -9,17 +9,6 @@ interface Pattern {
   void cleanup();
 }
 
-// TODO: Remove this and use PVector
-class Point {
-  float x;
-  float y;
-
-  Point(float x, float y) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
 // TODO: rename this!
 class Vector {
   float x;
@@ -138,15 +127,22 @@ Colormap getColormap(String name) {
 }
 
 Colormap readColormap(String name) {
+  colorMode(RGB, 255, 255, 255);
   color[] arr = new color[256];
-  Table table = loadTable(name + ".csv", "header");
+  Table table = loadTable(name + ".csv");
   int rowCount = 0;
   for (TableRow row : table.rows()) {
     color c = color(row.getInt(0), row.getInt(1), row.getInt(2));
+    int rr = (c >> 16) & 0xFF;
+    int gg = (c >> 8) & 0xFF;
+    int bb = c & 0xFF;          
+    assert rr == row.getInt(0);
+    assert gg == row.getInt(1);
+    assert bb == row.getInt(2);
     arr[rowCount] = c;
     rowCount++;
   }
-  assert rowCount == 255;
+  assert rowCount == 256;
   return new ArrayColormap(arr);
 }
 

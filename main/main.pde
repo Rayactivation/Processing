@@ -8,7 +8,7 @@ String layoutFile;
 Integer stripSize = null;
 // How long each pattern runs for, in milliseconds
 int patternSwitchTime;
-
+// On the screen display, show the location of the ray
 boolean showLocations = false;
 
 
@@ -23,7 +23,7 @@ void setup() {
   size(216, 144);
   //size(800, 600);
   // Patterns can switch the colorMode, but they shou
-  colorMode(RGB, 255, 255, 255);
+  colorMode(RGB);
   background(0);
 
   configure();
@@ -31,7 +31,7 @@ void setup() {
   try {
     ArrayList<OPC> opcs = setupOpc(layoutFile, stripSize);
     for (OPC opc : opcs) {
-      opc.showLocations(true);
+      opc.showLocations(showLocations);
     }
   }
   catch (IOException e) {
@@ -70,11 +70,11 @@ void setup() {
 
 
 void draw() {
-  background(255);
   if (millis() >= nextPatternTime) {
     if (currentPattern != null) {
       currentPattern.cleanup();
     }
+    background(255);
     // Reset the color mode in case some pattern misbehaved
     colorMode(RGB, 255, 255, 255);
     nextPattern();

@@ -123,7 +123,7 @@ class NickySpecial implements Pattern {
   int startSize;
 
   void setup() {
-    colorMode(HSB);
+    colorMode(HSB, 360, 255, 255);
     noStroke();
     println("In NickySpecial");
     i = 0;
@@ -134,12 +134,8 @@ class NickySpecial implements Pattern {
 
   void draw() {
     i = (i + 1) % 360;
-
-    //if ( i > 100) {
-    //  i = 0;
-    //}
-    background(0 );
-    fill(sin(i) * 360, 255, 255);
+    background(0);
+    fill(i, 255, 255);
     ellipse(width / 2, height / 2, startSize + i, startSize + i);
   }
 }

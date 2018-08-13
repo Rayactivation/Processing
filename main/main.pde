@@ -22,7 +22,8 @@ void setup() {
   frameRate(30);
   size(216, 144);
   //size(800, 600);
-  // Patterns can switch the colorMode, but they shou
+  // Patterns can switch the colorMode but they won't be able
+  // to use any of the colormaps as those are in RGB.
   colorMode(RGB);
   background(0);
 
@@ -45,6 +46,8 @@ void setup() {
   // I usually have to restart the processing application when
   // that happens
   patternClasses = new ArrayList<Class>();
+  patternClasses.add(LeftRight.class);
+  patternClasses.add(UpDown.class);
   patternClasses.add(ColorEmittingBar.class);
   patternClasses.add(RandomLinearBalls.class);
   patternClasses.add(RandomEbb.class);
@@ -55,10 +58,6 @@ void setup() {
   patternClasses.add(XYControlDot.class);
   patternClasses.add(Diamonds.class);
   patternClasses.add(ImageLoadFire.class);
-
-
-  //patternClasses.add(PatternA.class);
-  //patternClasses.add(PatternB.class);
 
   println("patternClasses size is " + patternClasses.size());
 

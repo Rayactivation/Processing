@@ -3,7 +3,16 @@ class ImageLoadFire implements Pattern {
 
   void setup() {
     print("In image loader");
+    try{
+      
     im = loadImage("flames.jpg");
+    }
+    catch (Exception e){
+      println("failed to load image");
+      e.printStackTrace();
+      println("calling next pattern");
+      nextPattern();
+    }
     delay(100);
   }
   void cleanup() {

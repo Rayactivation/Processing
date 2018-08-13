@@ -46,6 +46,8 @@ void setup() {
   // I usually have to restart the processing application when
   // that happens
   patternClasses = new ArrayList<Class>();
+  patternClasses.add(LeftRight.class);
+  patternClasses.add(UpDown.class);
   patternClasses.add(ColorEmittingBar.class);
   patternClasses.add(RandomLinearBalls.class);
   patternClasses.add(RandomEbb.class);

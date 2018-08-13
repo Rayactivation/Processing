@@ -4,6 +4,7 @@ class ImageLoadFire implements Pattern {
   void setup() {
     print("In image loader");
     im = loadImage("flames.jpg");
+    delay(100);
   }
   void cleanup() {
   };

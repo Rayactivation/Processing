@@ -27,6 +27,7 @@ class TonyTest implements Pattern {
   }
 
   void draw() {
+    background(100,100,100);
     // i = (i + heatVal) % 360;
     fill(color(heatVal, 255, 255));
     ellipse(width / 2, height / 2, 150, 150);
@@ -49,6 +50,7 @@ class XYControlDraw implements Pattern {
   }
 
   void draw() {
+    background(100,100,100);
     if ( oscHandlerQueue.isAvalible()) {
       PVector p = oscHandlerQueue.pop();
       p.x =map(p.x, 0, 100, 0, width);
@@ -78,6 +80,7 @@ class XYControlDot implements Pattern {
   void cleanup() {
   }
   void draw() {
+    background(100,100,100);
     fill(30, 100, 100);
     ellipse(map(xControl, 0, 100, 0, width), map(yControl, 0, 100, 0, height), 10, 10);
   }

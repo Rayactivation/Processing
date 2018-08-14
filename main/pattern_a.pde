@@ -71,13 +71,32 @@ class RandomLinearBalls implements Pattern {
   Colormap cm;
 
   void setup() {
-    cm = getColormap("hsi");
+    cm = randomColormap();
     vs = new LinkedList<EllipseAtVector>();
     for (int i=0; i<300; i++) {
       vs.add(randomVector());
     }
   }
   void cleanup() {
+  }
+
+  Colormap randomColormap() {
+    String[] colormaps = {"prism", 
+      "rainbow", 
+      "seismic", 
+      "spring", 
+      "summer", 
+      "tab10", 
+      "tab20", 
+      "tab20b", 
+      "tab20c", 
+      "terrain", 
+      "viridis", 
+      "winter"
+    };
+    String name = colormaps[randInt(0, colormaps.length)];
+    println("Using colormap " + name);
+    return getColormap(name);
   }
 
   EllipseAtVector randomVector() {

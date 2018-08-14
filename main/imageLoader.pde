@@ -5,7 +5,8 @@ class ImageLoadFire implements Pattern {
     print("In image loader");
     try{
       
-    im = loadImage("flames.jpg");
+ //   im = loadImage("flames.jpg");
+    im = loadImage("stars1.jpg");
     }
     catch (Exception e){
       println("failed to load image");

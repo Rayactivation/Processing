@@ -200,7 +200,9 @@ class Transition {
   }
 
   float update(float now) {
-    assert now <= this.endTime + 100: now + ">" + this.endTime + 100;
+    if (now > this.endTime + 100) { 
+      println(now + ">" + this.endTime + 100);
+    }
     float val = this.M * now + this.C;
     return val;
   }
@@ -241,9 +243,14 @@ class ColorTransition {
   // How long we're going to take to get through the current stage
   // in milliseconds
   Transition transition;
+  // How much to update the reference hue by on each step
+  // 119 tends to be a good value as its just off of half (128) so we make a slow, pretty walk
+  // around the color wheel
+  int offset;
 
-  ColorTransition(int referenceHue) {
+  ColorTransition(int referenceHue, int offset) {
     this.referenceHue = referenceHue;
+    this.offset = offset;
     setHue();
     this.currentStage = 0;
     setSwitchStage();
@@ -311,9 +318,7 @@ class ColorTransition {
   }
 
   void updateReferenceHue() {
-    // 119 is just off of half (128) so we make a slow, pretty walk
-    // around the color wheel
-    referenceHue = incByte(referenceHue, 119);
+    referenceHue = incByte(referenceHue, this.offset);
   }
 }
 

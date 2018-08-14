@@ -132,7 +132,7 @@ class TestColorTransition implements Pattern {
   ColorTransition t;
   void setup() {
     colorMode(RGB, 255, 255, 255);
-    t = new ColorTransition(0);
+    t = new ColorTransition(0, 119);
   }
   void cleanup() {
   }
@@ -170,7 +170,7 @@ class ColorTransitions implements Pattern {
     int dy = height / 20;
     for (int x=0; x<width; x+=dx) {
       for (int y=0; y<width; y+=dy) {
-        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue), new Quartet(x, y, dx, dy)));
+        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue, 119), new Quartet(x, y, dx, dy)));
       }
     }
   }
@@ -198,7 +198,7 @@ class ColorTransitionsDown implements Pattern {
     dy = height / 20;
     for (int x=0; x<width; x+=dx) {
       for (int y=-dy; y<width; y+=dy) {
-        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue), new Quartet(x, y, dx, dy)));
+        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue, 119), new Quartet(x, y, dx, dy)));
       }
     }
   }
@@ -234,20 +234,25 @@ class ColorTransitionsMove implements Pattern {
   void setup() {
     // This is a very different pattern with a small number of rows
     // and a large number of rows.  Both are interesting
-    nRows = 100; // y
-    nCols = 100; // x
+    // TODO: have more control over this.  This is unlikely to have 
+    //       both dx, and dy small.  Squares are unlikely, etc.
+    dx = 108;//1;//random(2, width/2);
+    dy = 1;//72;//random(2, height/2);  
+    nRows = int(height / dy + 2); // y
+    nCols = int(width / dx + 2); // x
     rows = new Integer[nRows];
     columns = new Integer[nCols];
     int hue = randomByte();
     ct = new ColorTransition[nCols + 1][nRows + 1];
     // Subtract two because we need one extra rectangle to the left
     // and one to the right.
-    dx = float(width) / (nCols - 2);
+    dx = float(width) / (nCols - 2); // dx*(ncols - 2) = w; ncols = w / dx - 2 
     // Same here, we need one above and one below.
     dy = float(height) / (nRows - 2);
+    println(dx, dy);
     for (int x=0; x<nCols; x++) {
       for (int y=0; y<nRows; y++) {
-        ct[x][y] = new ColorTransition(hue);
+        ct[x][y] = new ColorTransition(hue, 78);
       }
     }
     reset();

@@ -46,18 +46,18 @@ void setup() {
   // that happens
   patternClasses = new ArrayList<Class>();
   patternClasses.add(ColorTransitionsMove.class);
-  patternClasses.add(LeftRight.class);
-  patternClasses.add(UpDown.class);
-  patternClasses.add(ColorEmittingBar.class);
-  patternClasses.add(RandomLinearBalls.class);
-  patternClasses.add(RandomEbb.class);
-  patternClasses.add(TonyTest.class);
-  patternClasses.add(NickySpecial.class);
-  patternClasses.add(SpiralHue.class);
-  patternClasses.add(XYControlDraw.class);
-  patternClasses.add(XYControlDot.class);
-  patternClasses.add(Diamonds.class);
-  patternClasses.add(ImageLoadFire.class);
+  //patternClasses.add(LeftRight.class);
+  //patternClasses.add(UpDown.class);
+  //patternClasses.add(ColorEmittingBar.class);
+  //patternClasses.add(RandomLinearBalls.class);
+  //patternClasses.add(RandomEbb.class);
+  //patternClasses.add(TonyTest.class);
+  //patternClasses.add(NickySpecial.class);
+  //patternClasses.add(SpiralHue.class);
+  //patternClasses.add(XYControlDraw.class);
+  //patternClasses.add(XYControlDot.class);
+  //patternClasses.add(Diamonds.class);
+  //patternClasses.add(ImageLoadFire.class);
 
   println("patternClasses size is " + patternClasses.size());
 

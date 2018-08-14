@@ -4,9 +4,7 @@ class ImageLoadFire implements Pattern {
   void setup() {
     print("In image loader");
     try{
-
- //   im = loadImage("flames.jpg");
-    im = loadImage("stars1.jpg");
+      im = loadImage("stars1.jpg");
     }
     catch (Exception e){
       println("failed to load image");
@@ -22,7 +20,7 @@ class ImageLoadFire implements Pattern {
   void draw() {
     int imHeight = im.height * width / im.width;
 
-    float speed = 0.05;
+    float speed = 0.001;
     float y = (millis() * -speed) % imHeight;
 
     // Use two copies of the image, so it seems to repeat infinitely

@@ -1,8 +1,10 @@
 import csv
+import itertools
 import math
 import os
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -43,16 +45,30 @@ def hsi2rgb(h, s=1, i=1):
 
 
 def main():
-    with open(os.path.join(DATA, 'hsi.csv'), 'w') as fin:
+    hsi = (hsi2rgb(i, 1, 1) for i in range(256))
+    save_colormap('hsi', hsi)
+    blue = itertools.chain(
+        (hsi2rgb(i, 1, 1) for i in np.linspace(128, 192, 128)),
+        (hsi2rgb(i, 1, 1) for i in np.linspace(192, 128, 128)))
+    save_colormap('blue', blue)
+    for name, cmap in plt.cm.cmap_d.items():
+        if name.endswith("_r"):
+            continue
+        save_matplotlib_colormap(name, cmap)
+
+
+
+def save_colormap(name, rgb_iter):
+    with open(os.path.join(DATA, name + '.csv'), 'w') as fin:
         writer = csv.writer(fin)
-        for i in range(256):
-            writer.writerow(hsi2rgb(i, 1, 1))
-    with open(os.path.join(DATA, 'blue.csv'), 'w') as fin:
-        writer = csv.writer(fin)
-        for i in np.linspace(128, 192, 128):
-            writer.writerow(hsi2rgb(i, 1, 1))
-        for i in np.linspace(192, 128, 128):
-            writer.writerow(hsi2rgb(i, 1, 1))
+        for color in rgb_iter:
+            writer.writerow(color)
+
+
+def save_matplotlib_colormap(name, cmap):
+    step_size = cmap.N / 256
+    colors = (cmap(int(i*step_size), bytes=True) for i in range(256))
+    save_colormap(name, colors)
 
 
 if __name__ == '__main__':

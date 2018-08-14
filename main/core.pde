@@ -155,7 +155,7 @@ int randomByte() {
  * a (inclusive) and b (exclusive)
  */
 int randInt(int a, int b) {
-  return int(random(a, b));
+  return (int)Math.floor(random(a, b));
 }
 
 /**
@@ -300,7 +300,7 @@ class ColorTransition {
       // Ensure we're changing hues only when its dark
       assert this.transition.update(millis()) <= BRIGHTNESS[DARK + 1];
     }
-    if (random(1) < 0.2) {
+    if (random(1) < 0.00) {
       hue = referenceHue + 128;
     } else {
       hue = referenceHue;

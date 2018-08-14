@@ -45,7 +45,7 @@ void setup() {
   // I usually have to restart the processing application when
   // that happens
   patternClasses = new ArrayList<Class>();
-  patternClasses.add(TestColorTransition.class);
+  patternClasses.add(ColorTransitionsMove.class);
   patternClasses.add(LeftRight.class);
   patternClasses.add(UpDown.class);
   patternClasses.add(ColorEmittingBar.class);
@@ -73,11 +73,11 @@ void draw() {
     if (currentPattern != null) {
       currentPattern.cleanup();
     }
-    background(255);
     // Reset the color mode in case some pattern misbehaved
     colorMode(RGB, 255, 255, 255);
     nextPattern();
   }
+  background(255);
   int startTime = millis();
   currentPattern.draw();
   int endTime = millis();

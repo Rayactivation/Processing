@@ -160,3 +160,188 @@ class TestColorTransition implements Pattern {
     }
   }
 }
+
+class ColorTransitions implements Pattern {
+  List<Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>> ct;
+  void setup() {
+    int hue = randomByte();
+    ct = new ArrayList<Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>>();
+    int dx = width / 20;
+    int dy = height / 20;
+    for (int x=0; x<width; x+=dx) {
+      for (int y=0; y<width; y+=dy) {
+        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue), new Quartet(x, y, dx, dy)));
+      }
+    }
+  }
+  void cleanup() {
+  }
+  void draw() {
+    noStroke();
+    for (Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>> c : ct) {
+      fill(c.getValue0().update());
+      Quartet<Integer, Integer, Integer, Integer> p = c.getValue1();
+      rect(p.getValue0(), p.getValue1(), p.getValue2(), p.getValue3());
+    }
+  }
+}
+
+class ColorTransitionsDown implements Pattern {
+  List<Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>> ct;
+  int yOffset;
+  int dy;
+  void setup() {
+    yOffset = 0;
+    int hue = randomByte();
+    ct = new ArrayList<Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>>();
+    int dx = width / 20;
+    dy = height / 20;
+    for (int x=0; x<width; x+=dx) {
+      for (int y=-dy; y<width; y+=dy) {
+        ct.add(new Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>>(new ColorTransition(hue), new Quartet(x, y, dx, dy)));
+      }
+    }
+  }
+  void cleanup() {
+  }
+  void draw() {
+    if (frameCount % 5 == 0) {
+      yOffset = (yOffset + 1) % (height + dy);
+    }
+    background(0);
+    noStroke();
+    for (Pair<ColorTransition, Quartet<Integer, Integer, Integer, Integer>> c : ct) {
+      fill(c.getValue0().update());
+      Quartet<Integer, Integer, Integer, Integer> p = c.getValue1();
+      rect(p.getValue0(), (p.getValue1() + yOffset) % (height + dy) - dy, p.getValue2(), p.getValue3());
+    }
+  }
+}
+
+class ColorTransitionsMove implements Pattern {
+  ColorTransition[][] ct;
+  float yOffset;
+  float xOffset;
+  float dy;
+  float dx;
+  boolean moveRows;
+  // -1 to move the row left, 1 to move the row right, 0 to stay
+  Integer[] rows;
+  // -1 to move the column up, 1 to move the column down, 0 to stay
+  Integer[] columns;
+  int nRows;
+  int nCols;
+  void setup() {
+    // This is a very different pattern with a small number of rows
+    // and a large number of rows.  Both are interesting
+    nRows = 100; // y
+    nCols = 100; // x
+    rows = new Integer[nRows];
+    columns = new Integer[nCols];
+    int hue = randomByte();
+    ct = new ColorTransition[nCols + 1][nRows + 1];
+    // Subtract two because we need one extra rectangle to the left
+    // and one to the right.
+    dx = float(width) / (nCols - 2);
+    // Same here, we need one above and one below.
+    dy = float(height) / (nRows - 2);
+    for (int x=0; x<nCols; x++) {
+      for (int y=0; y<nRows; y++) {
+        ct[x][y] = new ColorTransition(hue);
+      }
+    }
+    reset();
+  }
+  void cleanup() {
+  }
+  void draw() {
+    background(0);
+    noStroke();
+    xOffset += dx / (1*frameRate);
+    yOffset += dy / (1*frameRate);
+    float myYOffset = 0;
+    float myXOffset = 0;
+    for (int x=0; x<nCols; x++) {
+      for (int y=0; y<nRows; y++) {
+        myYOffset = yOffset * columns[x];
+        myXOffset = xOffset * rows[y];
+        fill(ct[x][y].update());
+        rect((x-1)*dx + myXOffset, (y-1)*dy + myYOffset, dx, dy);
+      }
+    }
+    // Could also check that a full period (1 second) has passed
+    if (moveCols() && yOffset >= dy) {
+      for (int i=0; i<nCols; i++) {
+        int dir = columns[i];
+        if (dir == -1) {
+          cycleUp(i);
+        } else if (dir == 1) {
+          cycleDown(i);
+        }
+      }
+      reset();
+    } else if (moveRows && xOffset >= dx) {
+      for (int i=0; i<nRows; i++) {
+        int dir = rows[i];
+        if (dir == -1) {
+          cycleLeft(i);
+        } else if (dir == 1) {
+          cycleRight(i);
+        }
+      }
+      reset();
+    }
+  }
+  void reset() {
+    yOffset = 0;
+    xOffset = 0;
+    if (random(1) < 0.5) {
+      moveRows = true;
+      for (int i=0; i<nRows; i++) {
+        rows[i] = randInt(-1, 2);
+      }
+      for (int i=0; i<nCols; i++) {
+        columns[i] = 0;
+      }
+    } else {
+      moveRows = false;
+      for (int i=0; i<nRows; i++) {
+        rows[i] = 0;
+      }
+      for (int i=0; i<nCols; i++) {
+        columns[i] = randInt(-1, 2);
+      }
+    }
+  }
+  boolean moveCols() { 
+    return !moveRows;
+  }
+  void cycleDown(int column) {
+    ColorTransition tmp = ct[column][nRows-1];
+    for (int y=nRows-1; y>0; y--) {
+      ct[column][y] = ct[column][y-1];
+    }
+    ct[column][0] = tmp;
+  }
+  void cycleUp(int column) {
+    ColorTransition tmp = ct[column][0];
+    for (int y=0; y<nRows-1; y++) {
+      ct[column][y] = ct[column][y+1];
+    }
+    ct[column][nRows-1] = tmp;
+  }
+  void cycleRight(int row) {
+    ColorTransition tmp = ct[nCols-1][row];
+    for (int x=nCols-1; x>0; x--) {
+      ct[x][row] = ct[x-1][row];
+    }
+    ct[0][row] = tmp;
+  }
+  void cycleLeft(int row) {
+    ColorTransition tmp = ct[0][row];
+    for (int x=0; x<nCols-1; x++) {
+      ct[x][row] = ct[x+1][row];
+    }
+    ct[nCols-1][row] = tmp;
+  }
+}

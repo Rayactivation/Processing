@@ -236,8 +236,8 @@ class ColorTransitionsMove implements Pattern {
     // and a large number of rows.  Both are interesting
     // TODO: have more control over this.  This is unlikely to have 
     //       both dx, and dy small.  Squares are unlikely, etc.
-    dx = 108;//1;//random(2, width/2);
-    dy = 1;//72;//random(2, height/2);  
+    dx = random(2, width/2);
+    dy = random(2, height/2);  
     nRows = int(height / dy + 2); // y
     nCols = int(width / dx + 2); // x
     rows = new Integer[nRows];
@@ -348,5 +348,60 @@ class ColorTransitionsMove implements Pattern {
       ct[x][row] = ct[x+1][row];
     }
     ct[nCols-1][row] = tmp;
+  }
+}
+
+class DLA {
+  List<PVector> coalition;
+  PVector candidate;
+  PVector target;
+  int direction;
+
+  DLA(PVector target, int direction) {
+    this.target = target;
+    this.direction = direction;
+    setup();
+  }
+  void setup() {
+    coalition = new ArrayList<PVector>();
+    // TODO: actually find the wingtips
+    coalition.add(target);
+    candidate = new PVector(width/2, height/2);
+  }
+  void cleanup() {
+  }
+  void draw() {
+    boolean reset = false;
+    float start = millis();
+    // Use up half of our allotted time to simulate;
+    float end = start + (.5 / frameRate);
+    while (millis() < end) {
+      boolean found = false;
+      for (PVector pv : coalition) {
+        if (pv.dist(candidate) < 3) {
+          coalition.add(candidate);
+          found = true;
+          if (candidate.x <= width/2 + 1) {
+            reset = true;
+          }
+          candidate = new PVector(width/2, height/2 + randInt(-2, 3));
+          break;
+        }
+      }
+      candidate = candidate.add(direction, randInt(-2, 3));
+      if (candidate.x > width) {
+        candidate = new PVector(width/2, height/2);
+      }
+      if (found) {
+        break;
+      }
+    }
+    for (PVector pv : coalition) {
+      fill(0);
+      ellipse(pv.x, pv.y, 3, 3);
+    }
+    if (reset) { 
+      setup();
+    }
   }
 }

@@ -2,7 +2,7 @@
 layout files that can be used by OPC clients and servers.
 
 Want to be able to support local development mode, which is generally one
-opc server on 127.0.0.1, and also production, which will be 4 opc server.
+opc server on 127.0.0.1, and also production, which will be 4 opc servers.
 """
 import argparse
 import csv
@@ -23,6 +23,7 @@ BACK = 'back'
 
 def to_decimeter(inches):
     return float(inches) * dm_per_in
+
 
 def convert_row(rows):
     labels = ('LOC', 'IDX', 'LEN', 'HOST', 'PORT', 'STRIP')
@@ -61,9 +62,12 @@ def main():
     wing_width_dm = max(row['LEN'] for row in get_section(layout_input_data, LEFT))
     # The +1 is needed so that we don't have overlap
     middle_width_dm = (max(n_back_strips, n_front_strips) + 1) * strip_spacing_dm
+    # Found the center line between the two wings
     center_x_dm = wing_width_dm + (middle_width_dm / 2)
 
+    # the left wings start near the middle and go left (-)
     left_start_dm = wing_width_dm
+    # the right wings start new the middle and go right (+)
     right_start_dm = left_start_dm + middle_width_dm
 
     front_longest_dm = max(row['LEN'] for row in get_section(layout_input_data, FRONT))
@@ -73,14 +77,26 @@ def main():
 
     
     def get_start_and_offset_left(row):
+        """Return the start and offset for the left wing.
+
+        Start is the (x,y) coordinates of the first pixel.
+        Offset is the distance between pixels.
+        """
         assert row['LOC'] == LEFT
+        # pixels on the left wing have a negative offset because they go right to left
         offset = Point(-dm_per_px, 0)
         start = Point(left_start_dm, row['IDX'] * strip_spacing_dm + wing_offset_dm)
         return start, offset
 
 
     def get_start_and_offset_right(row):
+        """Return the start and offset for the right wing.
+
+        Start is the (x,y) coordinates of the first pixel.
+        Offset is the distance between pixels.
+        """
         assert row['LOC'] == RIGHT
+        # pixels on the right wing have a positive offset because they go left to right
         offset = Point(dm_per_px, 0)
         start = Point(right_start_dm, row['IDX'] * strip_spacing_dm + wing_offset_dm)
         return start, offset
@@ -95,7 +111,7 @@ def main():
     #               ---
     #  ------|----------
     # -------|-----------
-    # -----     -------
+    # ----- gap -------
     # -----     -------
     # -------|-----------
     #  ------|----------
@@ -112,8 +128,7 @@ def main():
     gap_in = 8.96
     # Its not clear from the drawing where each part of the bubble actually starts
     # So, this is my guess
-    bubble_starts_in = tuple(range(25, 9, -4))
-    assert len(bubble_starts_in) == 4, bubble_starts_in
+    bubble_starts_in = (25, 21, 17, 13)
     midline_starts_in = (0,) * 4
     gap_starts_in = (gap_in,) * 7
     front_starts_in = (
@@ -130,6 +145,7 @@ def main():
 
     def get_start_and_offset_front(row):
         assert row['LOC'] == FRONT
+        # front offset is negative because the pixels go up
         offset = Point(0, -dm_per_px)
         start_x = front_x_start_dm + (row['IDX'] + 1) * strip_spacing_dm
         fs = front_starts_dm[row['IDX']]
@@ -152,6 +168,7 @@ def main():
 
     def get_start_and_offset_back(row):
         assert row['LOC'] == BACK
+        # back offset is positive because the pixels go down
         offset = Point(0, dm_per_px)
         start_x = back_x_start_dm + (row['IDX'] + 1) * strip_spacing_dm
         bs = back_starts_dm[row['IDX']]
@@ -171,6 +188,9 @@ def main():
             return get_start_and_offset_right(row)
 
     layout = []
+    # walk through all of the pixels in the order that they
+    # will be hooked up to each opc server
+    # ie - ordered by strip and then pixels on that strip.
     for row in layout_input_data:
         start, offset = get_start_and_offset(row)
         n_pixels = int(float(row['LEN']) * px_per_dm)
@@ -233,6 +253,7 @@ def get_layout_datum(row, pt):
         'strip': row['STRIP'], 'point': pt.to_array(),
         'section': row['LOC']
     }
+
 
 class Point:
     def __init__(self, x, y, z=0):

@@ -76,18 +76,18 @@ class PointWithTrail {
   // TODO: create cycles out of the colormaps that don't wrap very well
   Colormap randomColormap() {
     String[] colormaps = {
-      "hsi",
-      "prism",
-      "rainbow",
-      "seismic",
-      "spring",
-      "summer",
-      "tab10",
-      "tab20",
-      "tab20b",
-      "tab20c",
-      "terrain",
-      "viridis",
+      "hsi", 
+      "prism", 
+      "rainbow", 
+      "seismic", 
+      "spring", 
+      "summer", 
+      "tab10", 
+      "tab20", 
+      "tab20b", 
+      "tab20c", 
+      "terrain", 
+      "viridis", 
       "winter"
     };
     String name = colormaps[randInt(0, colormaps.length)];
@@ -194,11 +194,27 @@ class WalkingBar {
   PVector base;
   PVector slope;
   float len;
+  // These are all related to tracking the slope/angle of rotation
+  // TODO: abstract this away
+  // How far we rotated
+  float totalRotation;
+  // What direction we are rotating
+  // positive = clockwise, negative = counter
+  float rotationDirection;
+  // how far to rotate
+  float targetRotation;
+  // null if not in transition, otherwise the frame
+  // number that we started transitioning
+  Integer startTransition;
 
   WalkingBar(PVector base, PVector slope, float len) {
     this.base = base;
     this.slope = slope;
     this.len = len;
+    this.totalRotation = 0;
+    this.rotationDirection = randPosNeg();
+    this.targetRotation = 2 * PI;
+    this.startTransition = null;
   }
 
   void draw() {
@@ -214,21 +230,57 @@ class WalkingBar {
     base.x = reflect(base.x + baseXSpeed, 0, width);
     base.y = reflect(base.y + baseYSpeed, 0, height);
     slope.rotate(thetaSpeed);
+    totalRotation += abs(thetaSpeed);
     len = reflect(len + lengthSpeed, 20, 150);
     baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
     baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
 
     float maxRotationSpeed = 150.0/len * 0.01;
     float t = frameCount;// / frameRate;
-    thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);
+    thetaSpeed = maxRotationSpeed * squareWave();
     lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
     // There is a relationship between length and maximum rotation speed
+    // Where speed is radians per frame.
+    // Max speed is observational
     // Length : Max Speed : Actual : Period
     //  150   :  0.01     :  0.01  :  200 = 6.6 seconds
     //  100   :  0.02     :  0.015 :  133 = 4.3
     //   50   :  0.04     :  0.03  :   66 = 2.2
     //   25   :  0.1      :  0.06  :   33 = 1.1
     // Though, at really high speeds interesting things can happen
+  }
+
+  float squareWave() {
+    if (startTransition != null) {
+      return transition();
+    }
+    if (totalRotation > targetRotation) {
+      // Need to ease into the transition
+      // from 1 -> -1 over N frames
+      startTransition = frameCount;
+      return transition();
+    }
+    return rotationDirection;
+  }
+
+  float transition() {
+    int N = 10; // transition over 1/3 of a second
+    assert startTransition != null;
+    int n = frameCount - startTransition;
+    if (n >= N) {
+      startTransition = null;
+      rotationDirection *= -1;
+      totalRotation = 0;
+      targetRotation = 2*PI;
+      return squareWave();
+    }
+    // This gives a smooth value between 0 and 1
+    float ss = smoothstep(float(n)/N);
+    return rotationDirection * (1 - (2 * ss));
+  }
+
+  float smoothstep(float x) {
+    return x * x * (3 - 2 * x);
   }
 
   List<Pair<PVector, Float>> vectors() {
@@ -248,6 +300,7 @@ class WalkingBar {
     return result;
   }
 }
+
 
 // One idea is make Vectors have neighbors and if two neighbors get
 // too far apart (like > 1 pixel) then a new vector is created halfway
@@ -319,10 +372,10 @@ class Triangle implements Wave {
 
 
 private static final int[][] NEIGHBORS = {
-  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0},
-  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1},
-  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2},
-  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1},
+  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
+  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1}, 
+  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2}, 
+  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1}, 
   { 1, 2}, { 1, 2}
 };
 

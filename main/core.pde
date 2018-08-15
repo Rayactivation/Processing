@@ -158,6 +158,10 @@ int randInt(int a, int b) {
   return (int)Math.floor(random(a, b));
 }
 
+int randPosNeg() {
+  return random(1) < .5 ? -1 : 1;  
+}
+
 /**
  * Perception of LED brightness is not linear. This applies a correction
  * so that we get approximately 32 equal steps of brightness

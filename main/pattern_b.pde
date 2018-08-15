@@ -78,21 +78,22 @@ class PointWithTrail {
     String[] colormaps = {
       "hsi", 
       "prism", 
-      "rainbow", 
-      "seismic", 
-      "spring", 
-      "summer", 
       "tab10", 
       "tab20", 
       "tab20b", 
       "tab20c", 
+      // These need to be reflected
+      "rainbow", 
+      "seismic", 
+      "spring", 
+      "summer", 
       "terrain", 
       "viridis", 
       "winter"
     };
     String name = colormaps[randInt(0, colormaps.length)];
     println("Using colormap " + name);
-    return getColormap(name);
+    return getColormap(name, true, randBool());
   }
 
   void populateGrid() {
@@ -100,7 +101,10 @@ class PointWithTrail {
     bar.walk();
     hue = incByte(hue);
     addNewVectors();
+    updateAndDraw();
+  }
 
+  void updateAndDraw() {
     Iterator<VectorInGrid> iter = vs.iterator();
     while (iter.hasNext()) {
       VectorInGrid v = iter.next();
@@ -326,6 +330,8 @@ class VectorInGrid {
       return;
     }
     // the vectors array is offset one, so our index needs to change
+    // TODO: looking at the profile, the int() calls are the hotspot and taking
+    //       up a lot of CPU time.
     this.grid[int(this.v.y + 1)*(width + 2) + int(this.v.x + 1)] = this.v;
   }
 
@@ -387,6 +393,7 @@ IntList getLevelOrder(int level) {
   return result;
 }
 
+//TODO: This is also slow
 List<PVector> getNeighbors(int level) {
   assert level >= 1;
   List<PVector> result = new ArrayList<PVector>();

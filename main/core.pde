@@ -117,13 +117,60 @@ class ArrayColormap implements Colormap {
   }
 }
 
+Map<String, Boolean> colormapProps = new HashMap<String, Boolean>();
+void populateColormapProps() {
+  colormapProps.put("hsi", true);   
+  colormapProps.put("prism", true); 
+  colormapProps.put("tab10", true);
+  colormapProps.put("tab20", true);
+  colormapProps.put("tab20b", true);
+  colormapProps.put("tab20c", true);
+  // These need to be reflected
+  colormapProps.put("rainbow", false);
+  colormapProps.put("seismic", false); 
+  colormapProps.put("spring", false);
+  colormapProps.put("summer", false);
+  colormapProps.put("terrain", false);
+  colormapProps.put("viridis", false);
+  colormapProps.put("winter", false);
+}
+
 Map<String, Colormap> cache = new LruCache<String, Colormap>(10);
 Colormap getColormap(String name) {
+  return getColormap(name, false, false);
+}
+Colormap getColormap(String name, boolean reflect, boolean reverse) {
   if (!cache.containsKey(name)) {
     Colormap cm = readColormap(name);
     cache.put(name, cm);
   }
-  return cache.get(name);
+  Colormap cm = cache.get(name);
+  if (reflect && !colormapProps.get(name)) {
+    cm =reflectColormap(cm);
+  } 
+  if (reverse) {
+    cm = reverseColormap(cm);
+  }
+  return cm;
+}
+
+Colormap reflectColormap(Colormap cm) {
+  color[] arr = new color[256];
+  for (int i=0; i<128; i++) {
+    arr[i] = cm.getColor(i*2);
+  }
+  for (int i=0; i<128; i++) {
+    arr[i + 128] = arr[127 - i];
+  }
+  return new ArrayColormap(arr);
+}
+
+Colormap reverseColormap(Colormap cm) {
+  color[] arr = new color[256];
+  for (int i=0; i<256; i++) {
+    arr[i] = cm.getColor(255-i);
+  }
+  return new ArrayColormap(arr);
 }
 
 Colormap readColormap(String name) {
@@ -159,7 +206,11 @@ int randInt(int a, int b) {
 }
 
 int randPosNeg() {
-  return random(1) < .5 ? -1 : 1;  
+  return random(1) < .5 ? -1 : 1;
+}
+
+boolean randBool() {
+  return random(1) < .5 ? true : false;
 }
 
 /**
@@ -171,7 +222,7 @@ int randPosNeg() {
  *
  */
 int[] BRIGHTNESS = {
-  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134,
+  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134, 
   148, 163, 180, 197, 216, 235, 255};
 int MAX_BRIGHTNESS = BRIGHTNESS.length;
 
@@ -228,8 +279,8 @@ class ColorTransition {
   final int N_STAGES = 4;
   // Used to pick random bright values with a weighting towards
   // brighter values
-  final int[] BRIGHT = {17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 22, 23, 24, 25, 26,
+  final int[] BRIGHT = {17, 18, 19, 20, 21, 
+    22, 23, 24, 25, 26, 22, 23, 24, 25, 26, 
     27, 28, 29, 30, 31, 27, 28, 29, 30, 31, 27, 28, 29, 30, 31};
   final int DARK = 14;
 

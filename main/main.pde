@@ -66,6 +66,7 @@ void setup() {
   oscSetup();
 
   oscHandlerQueue = new OscHandlerQueue();
+  populateColormapProps();
 }
 
 

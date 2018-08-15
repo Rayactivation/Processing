@@ -81,7 +81,9 @@ class RandomLinearBalls implements Pattern {
   }
 
   Colormap randomColormap() {
-    String[] colormaps = {"prism", 
+    String[] colormaps = {
+      "hsi", 
+      "prism", 
       "rainbow", 
       "seismic", 
       "spring", 
@@ -370,11 +372,80 @@ class ColorTransitionsMove implements Pattern {
   }
 }
 
+class DlaPattern implements Pattern {
+  DLA[] dlas;
+  void setup() {
+    dlas = new DLA[]{new DLA(new PVector(0, height/2), -1), new DLA(new PVector(width, height/2), 1)};
+  }
+  void cleanup() {
+  }
+  void draw() {
+    for (DLA dla : dlas) {
+      dla.draw(1000 /(3 * frameRate));
+    }
+  }
+}
+
+class VectorPointTest implements Pattern {
+  List<PointVector> vps;
+  void setup() {
+    vps = new ArrayList<PointVector>();
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+    vps.add(new PointVector(new PVector(0, 0), new PVector(1, 1)));
+  }
+  void cleanup() {
+  }
+  void draw() {
+    noStroke();
+    PointVector vp = vps.get(0);
+    vp.move();
+    fill(255, 0, 0);
+    ellipse(vp.point.x, vp.point.y, 5, 5);
+    for (int i = 1; i<vps.size(); i++) {
+      vp = vps.get(i);
+      vp.move(1, 2);
+      fill(0, 255, 0);
+      ellipse(vp.point.x, vp.point.y, 5, 5);
+    }
+  }
+}
+
+/**
+ * Contains the location of an item
+ * and the direction of travel
+ */
+class PointVector {
+  // Where we are at
+  PVector point;
+  // Where we are heading
+  PVector vector;
+
+  PointVector(PVector point, PVector vector) {
+    this.vector = vector.normalize();
+    this.point = point;
+  }
+  void move() {
+    move(1, 0);
+  }
+  void move(float scale, float rnd) {
+    point.x += vector.x * random(scale - rnd, scale + rnd);
+    point.y += vector.y * random(scale - rnd, scale + rnd);
+  }
+}
+
 class DLA {
   List<PVector> coalition;
-  PVector candidate;
+  PointVector candidate;
   PVector target;
   int direction;
+  float maxDistance;
 
   DLA(PVector target, int direction) {
     this.target = target;
@@ -385,31 +456,52 @@ class DLA {
     coalition = new ArrayList<PVector>();
     // TODO: actually find the wingtips
     coalition.add(target);
-    candidate = new PVector(width/2, height/2);
+    candidate = newCandidate();
+    maxDistance = 0;
   }
   void cleanup() {
   }
-  void draw() {
+  PointVector newCandidate() {
+    println("NEW CANDIDATE ", maxDistance);
+    float theta;
+    if (direction == 1) {
+      theta = random(.75*PI, 1.25*PI);
+    } else {
+      theta = random(-.25*PI, .25*PI);
+    }
+    PVector offset = PVector.fromAngle(theta);
+    offset.setMag(maxDistance + 25);
+    PointVector pv = new PointVector(PVector.add(target, offset), PVector.fromAngle(theta + PI));
+    println("New candidate: ", pv.point.x, pv.point.y);
+    return pv;
+  }
+
+  void draw(float time) {
+    //println("Have " + time + " milliseconds");
     boolean reset = false;
     float start = millis();
     // Use up half of our allotted time to simulate;
-    float end = start + (.5 / frameRate);
+    float end = start + time;
     while (millis() < end) {
       boolean found = false;
       for (PVector pv : coalition) {
-        if (pv.dist(candidate) < 3) {
-          coalition.add(candidate);
+        if (pv.dist(candidate.point) < 3) {
+          float dist = target.dist(candidate.point);
+          maxDistance = max(dist, maxDistance);
+          coalition.add(candidate.point);
           found = true;
-          if (candidate.x <= width/2 + 1) {
+          if (direction == 1 && candidate.point.x <= width/2 + 1) {
+            reset = true;
+          } else if (direction == -1 && candidate.point.x >= width/2 - 1) {
             reset = true;
           }
-          candidate = new PVector(width/2, height/2 + randInt(-2, 3));
+          candidate = newCandidate();
           break;
         }
       }
-      candidate = candidate.add(direction, randInt(-2, 3));
-      if (candidate.x > width) {
-        candidate = new PVector(width/2, height/2);
+      candidate.move(1, 3);//1, 1);
+      if (candidate.point.x >= width || candidate.point.x < 0) {
+        candidate = newCandidate();
       }
       if (found) {
         break;
@@ -419,6 +511,9 @@ class DLA {
       fill(0);
       ellipse(pv.x, pv.y, 3, 3);
     }
+    fill(255, 0, 0);
+    println(candidate.point.x, candidate.point.y, 5, 5);
+    ellipse(candidate.point.x, candidate.point.y, 5, 5);
     if (reset) { 
       setup();
     }

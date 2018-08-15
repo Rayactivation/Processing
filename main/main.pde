@@ -49,7 +49,7 @@ void setup() {
   //patternClasses.add(LeftRight.class);
   //patternClasses.add(UpDown.class);
   //patternClasses.add(ColorEmittingBar.class);
-  patternClasses.add(RandomLinearBalls.class);
+  patternClasses.add(DlaPattern.class);
   //patternClasses.add(RandomEbb.class);
   //patternClasses.add(TonyTest.class);
   //patternClasses.add(NickySpecial.class);

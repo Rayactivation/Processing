@@ -57,9 +57,9 @@ class PointWithTrail {
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
     this.hue = int(random(0, 256));
-    bar = new WalkingBar(new PVector(width / 2, height / 2), new Slope(random(0, 2*PI)), random(20, 150));
+    bar = new WalkingBar(new PVector(width / 2, height / 2), PVector.fromAngle(random(0, 2*PI)), random(20, 150));
     this.velocity = 1;
-    this.cm = getColormap("hsi");
+    this.cm = randomColormap();//getColormap("hsi");
     this.grid = grid;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
@@ -72,6 +72,27 @@ class PointWithTrail {
         break;
       }
     }
+  }
+  
+    Colormap randomColormap() {
+    String[] colormaps = {
+      "hsi", 
+      "prism", 
+      "rainbow", 
+      "seismic", 
+      "spring", 
+      "summer", 
+      "tab10", 
+      "tab20", 
+      "tab20b", 
+      "tab20c", 
+      "terrain", 
+      "viridis", 
+      "winter"
+    };
+    String name = colormaps[randInt(0, colormaps.length)];
+    println("Using colormap " + name);
+    return getColormap(name);
   }
 
   void populateGrid() {
@@ -171,18 +192,18 @@ class WalkingBar {
   float thetaSpeed = 0;
   float lengthSpeed = 0;
   PVector base;
-  Slope slope;
+  PVector slope;
   float len;
 
-  WalkingBar(PVector base, Slope slope, float len) {
+  WalkingBar(PVector base, PVector slope, float len) {
     this.base = base;
     this.slope = slope;
     this.len = len;
   }
 
   void draw() {
-    PVector start = new PVector(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
-    PVector end = new PVector(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    PVector start = PVector.add(base, PVector.mult(slope, len / 2));// * slope.dx, base.y + len / 2 * slope.dy);
+    PVector end = PVector.add(base, PVector.mult(slope, -len / 2));//new PVector(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
     fill(color(0, 0, 0));
     ellipse(start.x, start.y, 1, 1);
     fill(color(0, 0, 0));
@@ -192,7 +213,7 @@ class WalkingBar {
   void walk() {
     base.x = reflect(base.x + baseXSpeed, 0, width);
     base.y = reflect(base.y + baseYSpeed, 0, height);
-    slope.setTheta(slope.theta + thetaSpeed);
+    slope.rotate(thetaSpeed);
     len = reflect(len + lengthSpeed, 20, 150);
     baseXSpeed = reflect(baseXSpeed + random(-.03, .03) + ( width / 2 - base.x) * 0.0001, -.2, .2);
     baseYSpeed = reflect(baseYSpeed + random(-.03, .03) + (height / 2 - base.y) * 0.0001, -.2, .2);
@@ -202,24 +223,24 @@ class WalkingBar {
     thetaSpeed = maxRotationSpeed * sin(t * maxRotationSpeed / PI);
     lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
     // There is a relationship between length and maximum rotation speed
-    // Lenght : Max Speed
-    // 150 : 0.01
-    // 100 : 0.02
-    //  50 : 0.04
-    //  25 : 0.1
+    // Length : Max Speed : Actual : Period
+    //  150   :  0.01     :  0.01  :  200 = 6.6 seconds 
+    //  100   :  0.02     :  0.015 :  133 = 4.3
+    //   50   :  0.04     :  0.03  :   66 = 2.2
+    //   25   :  0.1      :  0.06  :   33 = 1.1
     // Though, at really high speeds interesting things can happen
   }
 
   List<Pair<PVector, Float>> vectors() {
     ArrayList<Pair<PVector, Float>> result = new ArrayList<Pair<PVector, Float>>(); 
-    float startingTheta = slope.theta + PI/2;
+    float startingTheta = slope.heading() + PI/2;
     for (float i=-len / 2; i < len / 2; i+=.5) {
-      PVector pt = new PVector(base.x + i * slope.dx, base.y + i * slope.dy);
+      PVector pt = PVector.add(base, PVector.mult(slope, i));
       result.add(new Pair(pt, startingTheta));
       result.add(new Pair(pt, startingTheta + PI));
     }
-    PVector start = new PVector(base.x + len / 2 * slope.dx, base.y + len / 2 * slope.dy);
-    PVector end = new PVector(base.x - len / 2 * slope.dx, base.y - len / 2 * slope.dy);
+    PVector start = PVector.add(base, PVector.mult(slope, len / 2));
+    PVector end = PVector.add(base, PVector.mult(slope, - len / 2));
     for (float offset=0; offset<PI; offset+=PI/180) {
       result.add(new Pair(end, startingTheta + offset));
       result.add(new Pair(start, startingTheta + PI + offset));
@@ -265,22 +286,6 @@ class VectorInGrid {
   }
 }
 
-
-class Slope {
-  private float theta;
-  float dx;
-  float dy;
-
-  Slope(float theta) {
-    setTheta(theta);
-  }
-
-  void setTheta(float theta) {
-    this.theta = theta;
-    this.dx = cos(theta);
-    this.dy = sin(theta);
-  }
-}
 
 interface Wave {
   float step();

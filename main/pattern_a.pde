@@ -66,6 +66,7 @@ class RandomEbb implements Pattern {
  * Draws a bunch of balls, each randomly placed, with a random velocity and a random blue-ish color.
  * When the ball goes off the screen a new one is randomly created to take its place.
  */
+// TODO: Randomly pick number of balls and size of balls.
 class RandomLinearBalls implements Pattern {
   LinkedList<EllipseAtVector> vs;
   Colormap cm;
@@ -485,7 +486,7 @@ class DLA {
     while (millis() < end) {
       boolean found = false;
       for (PVector pv : coalition) {
-        if (pv.dist(candidate.point) < 3) {
+        if (pv.dist(candidate.point) < 2) {
           float dist = target.dist(candidate.point);
           maxDistance = max(dist, maxDistance);
           coalition.add(candidate.point);
@@ -509,7 +510,7 @@ class DLA {
     }
     for (PVector pv : coalition) {
       fill(0);
-      ellipse(pv.x, pv.y, 3, 3);
+      ellipse(pv.x, pv.y, 1, 1);
     }
     fill(255, 0, 0);
     println(candidate.point.x, candidate.point.y, 5, 5);

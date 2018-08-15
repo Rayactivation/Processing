@@ -31,6 +31,12 @@ def convert_row(rows):
     return [{lbl: typ(r[lbl]) for lbl, typ in zip(labels, types)} for r in rows]
 
 
+def convert_bad_pixel_row(rows):
+    labels = ('LOC', 'IDX', 'PIXEL')
+    types = (str, int, int)
+    return [tuple(typ(r[lbl]) for lbl, typ in zip(labels, types)) for r in rows]
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dev-opc-server', default='127.0.0.1:7890')
@@ -43,6 +49,11 @@ def main():
 
     layout_input_data = sorted(
         layout_input_data, key=lambda row: (row['HOST'], row['PORT'], row['STRIP']))
+
+    with open(os.path.join(DIR, 'bad_pixels.csv')) as fin:
+        bad_pixels = convert_bad_pixel_row(csv.DictReader(fin, delimiter='\t'))
+        print(bad_pixels)
+
 
     # The general layout is
     #    -----
@@ -195,6 +206,9 @@ def main():
         start, offset = get_start_and_offset(row)
         n_pixels = int(float(row['LEN']) * px_per_dm)
         for i in range(n_pixels + 1):
+            if (row['LOC'], row['IDX'], i) in bad_pixels:
+                print('Skipping {} as it is a bad pixel'.format((row['LOC'], row['IDX'], i)))
+                continue
             pt = start + i * offset
             try:
                 assert_positive(pt.to_array())
@@ -204,7 +218,7 @@ def main():
             layout.append(get_layout_datum(row, pt))
     
     print("Total pixels: {}".format(len(layout)))
-    assert len(layout) == 6088
+    assert len(layout) == 6088 - len(bad_pixels)
     round_points(layout)
     assert_positive_coordinates(layout)
     with open(os.path.join(DIR, 'layout.json'), 'w') as fout:

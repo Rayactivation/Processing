@@ -73,8 +73,8 @@ class PointWithTrail {
       }
     }
   }
-
-    Colormap randomColormap() {
+  // TODO: create cycles out of the colormaps that don't wrap very well
+  Colormap randomColormap() {
     String[] colormaps = {
       "hsi",
       "prism",

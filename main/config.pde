@@ -13,13 +13,13 @@ HashMap<String, String> loadConfig(String filename) {
   String[] lines = loadStrings(filename);
   HashMap<String, String> map = new HashMap<String, String>();
   for (String line : lines) {
-    if (line.charAt(0) == '#') { 
+    if (line.charAt(0) == '#') {
       continue;
     }
     String[] kv = split(line, ":");
     String key = trim(kv[0]);
     String value = trim(kv[1]);
     map.put(key, value);
-  } 
+  }
   return map;
 }

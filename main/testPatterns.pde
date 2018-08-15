@@ -25,5 +25,5 @@ class UpDown implements Pattern {
     float val = y.step();
     stroke(#FFFFFF);
     line(0, val, width, val);
-  }  
+  }
 }

@@ -85,7 +85,7 @@ class Timer {
     if (millis() - startTime >= timeBase) {
       startTime = millis();
       return true;
-    } 
+    }
     return false;
   }
   void timeUp() {
@@ -135,7 +135,7 @@ Colormap readColormap(String name) {
     color c = color(row.getInt(0), row.getInt(1), row.getInt(2));
     int rr = (c >> 16) & 0xFF;
     int gg = (c >> 8) & 0xFF;
-    int bb = c & 0xFF;          
+    int bb = c & 0xFF;
     assert rr == row.getInt(0);
     assert gg == row.getInt(1);
     assert bb == row.getInt(2);
@@ -167,7 +167,7 @@ int randInt(int a, int b) {
  *
  */
 int[] BRIGHTNESS = {
-  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134, 
+  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134,
   148, 163, 180, 197, 216, 235, 255};
 int MAX_BRIGHTNESS = BRIGHTNESS.length;
 
@@ -200,7 +200,7 @@ class Transition {
   }
 
   float update(float now) {
-    if (now > this.endTime + 100) { 
+    if (now > this.endTime + 100) {
       println(now + ">" + this.endTime + 100);
     }
     float val = this.M * now + this.C;
@@ -224,8 +224,8 @@ class ColorTransition {
   final int N_STAGES = 4;
   // Used to pick random bright values with a weighting towards
   // brighter values
-  final int[] BRIGHT = {17, 18, 19, 20, 21, 
-    22, 23, 24, 25, 26, 22, 23, 24, 25, 26, 
+  final int[] BRIGHT = {17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31, 27, 28, 29, 30, 31, 27, 28, 29, 30, 31};
   final int DARK = 14;
 

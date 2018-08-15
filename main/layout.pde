@@ -15,7 +15,7 @@ import java.util.TreeMap;
 import org.javatuples.Pair;
 
 /* Parse the json layout file and create the corresponding OPC clients.
- * 
+ *
  * The layout file needs to be an array of objects. Each object contains
  * the keys: host, port, point
  * [{host: "127.0.0.1", port: 7890, point: [2, 3, 0], strip: 1}, ...]
@@ -52,7 +52,7 @@ ArrayList<OPC> setupOpc(String jsonLayoutFile, Integer stripSize) throws IOExcep
 
     JsonArray point = o.get("point").getAsJsonArray();
     PVector pt = new PVector(point.get(0).getAsFloat(), point.get(1).getAsFloat());
-    points.add(pt); 
+    points.add(pt);
     min_x = min(pt.x, min_x);
     min_y = min(pt.y, min_y);
     max_x = max(pt.x, max_x);
@@ -87,12 +87,12 @@ ArrayList<OPC> setupOpc(String jsonLayoutFile, Integer stripSize) throws IOExcep
         }
       }
     }
-  }  
+  }
   return results;
 }
 
-static String readFile(String path, Charset encoding) 
-  throws IOException 
+static String readFile(String path, Charset encoding)
+  throws IOException
 {
   byte[] encoded = Files.readAllBytes(Paths.get(path));
   return new String(encoded, encoding);

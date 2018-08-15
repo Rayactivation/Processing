@@ -48,7 +48,7 @@ public class OPC implements Runnable
   }
 
   // Set the location of a single LED
-  void led(int index, int x, int y)  
+  void led(int index, int x, int y)
   {
     growArrays(index);
     pixelMask[index] = true;
@@ -73,8 +73,8 @@ public class OPC implements Runnable
     for (int i = 0; i < count; i++) {
       int stripIndex = (index * count);
       //print("strip " + index + " pixel " + i + " should be index " + stripIndex + "\n");
-      led(reversed ? (stripIndex + count - 1 - i) : (stripIndex + i), 
-        (int)(x + (i - (count-1)/2.0) * spacing * c + 0.5), 
+      led(reversed ? (stripIndex + count - 1 - i) : (stripIndex + i),
+        (int)(x + (i - (count-1)/2.0) * spacing * c + 0.5),
         (int)(y + (i - (count-1)/2.0) * spacing * s + 0.5));
       //print(" " + (reversed ? (stripIndex + count - 1 - i) : (stripIndex + i)));
       //print(" " + ((int)(x + (i - (count-1)/2.0) * spacing * c + 0.5)));
@@ -90,7 +90,7 @@ public class OPC implements Runnable
   {
     for (int i = 0; i < count; i++) {
       float a = angle + i * 2 * PI / count;
-      led(index + i, (int)(x - radius * cos(a) + 0.5), 
+      led(index + i, (int)(x - radius * cos(a) + 0.5),
         (int)(y - radius * sin(a) + 0.5));
     }
   }
@@ -98,23 +98,23 @@ public class OPC implements Runnable
   // Set the location of several LEDs arranged in a grid. The first strip is
   // at 'angle', measured in radians clockwise from +X.
   // (x,y) is the center of the grid.
-  void ledGrid(int index, int stripLength, int numStrips, float x, float y, 
-    float ledSpacing, float stripSpacing, float angle, boolean zigzag, 
+  void ledGrid(int index, int stripLength, int numStrips, float x, float y,
+    float ledSpacing, float stripSpacing, float angle, boolean zigzag,
     boolean flip)
   {
     float s = sin(angle + HALF_PI);
     float c = cos(angle + HALF_PI);
     for (int i = 0; i < numStrips; i++) {
-      ledStrip(index + stripLength * i, stripLength, 
-        x + (i - (numStrips-1)/2.0) * stripSpacing * c, 
-        y + (i - (numStrips-1)/2.0) * stripSpacing * s, ledSpacing, 
+      ledStrip(index + stripLength * i, stripLength,
+        x + (i - (numStrips-1)/2.0) * stripSpacing * c,
+        y + (i - (numStrips-1)/2.0) * stripSpacing * s, ledSpacing,
         angle, zigzag && ((i % 2) == 1) != flip);
     }
   }
 
   // Set the location of 64 LEDs arranged in a uniform 8x8 grid.
   // (x,y) is the center of the grid.
-  void ledGrid8x8(int index, float x, float y, float spacing, float angle, boolean zigzag, 
+  void ledGrid8x8(int index, float x, float y, float spacing, float angle, boolean zigzag,
     boolean flip)
   {
     ledGrid(index, 8, 8, x, y, spacing, spacing, angle, zigzag, flip);
@@ -159,7 +159,7 @@ public class OPC implements Runnable
   {
     firmwareConfig &= 0x0C;
     sendFirmwareConfigPacket();
-  }    
+  }
 
   // Manually turn the Fadecandy onboard LED on or off. This disables automatic LED control.
   void setStatusLed(boolean on)
@@ -170,7 +170,7 @@ public class OPC implements Runnable
     else
       firmwareConfig &= ~0x08;
     sendFirmwareConfigPacket();
-  } 
+  }
 
   // Set the color correction parameters
   void setColorCorrection(float gamma, float red, float green, float blue)
@@ -207,7 +207,7 @@ public class OPC implements Runnable
 
     try {
       pending.write(packet);
-    } 
+    }
     catch (Exception e) {
       dispose();
     }
@@ -240,7 +240,7 @@ public class OPC implements Runnable
     try {
       pending.write(header);
       pending.write(content);
-    } 
+    }
     catch (Exception e) {
       dispose();
     }
@@ -355,7 +355,7 @@ public class OPC implements Runnable
 
     try {
       output.write(packetData);
-    } 
+    }
     catch (Exception e) {
       dispose();
     }
@@ -389,10 +389,10 @@ public class OPC implements Runnable
           sendFirmwareConfigPacket();         // rather than 'output' before
           output = pending;                   // rest of code given access.
           // pending not set null, more config packets are OK!
-        } 
+        }
         catch (ConnectException e) {
           dispose();
-        } 
+        }
         catch (IOException e) {
           dispose();
         }

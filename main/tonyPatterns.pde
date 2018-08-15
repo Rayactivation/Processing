@@ -4,12 +4,12 @@
  Noinput
  - dimonds that progress outward from the center
  -lepord spots
- 
+
  Input
  -Two controlled ball that explode when they hit
- 
- 
- 
+
+
+
  */
 
 
@@ -39,7 +39,7 @@ class XYControlDraw implements Pattern {
 
   ArrayList<PVector> points;
 
-  void setup() {    
+  void setup() {
     colorMode(HSB);
     println("In XYControl Draw");
     oscHandlerQueue.enable();
@@ -73,7 +73,7 @@ class XYControlDraw implements Pattern {
 //take XY from phone screen and draw on Ray
 class XYControlDot implements Pattern {
   ArrayList<PVector> points;
-  void setup() {    
+  void setup() {
     colorMode(HSB);
     println("In XYControlDot");
   }

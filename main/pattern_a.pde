@@ -83,18 +83,18 @@ class RandomLinearBalls implements Pattern {
 
   Colormap randomColormap() {
     String[] colormaps = {
-      "hsi", 
-      "prism", 
-      "rainbow", 
-      "seismic", 
-      "spring", 
-      "summer", 
-      "tab10", 
-      "tab20", 
-      "tab20b", 
-      "tab20c", 
-      "terrain", 
-      "viridis", 
+      "hsi",
+      "prism",
+      "rainbow",
+      "seismic",
+      "spring",
+      "summer",
+      "tab10",
+      "tab20",
+      "tab20b",
+      "tab20c",
+      "terrain",
+      "viridis",
       "winter"
     };
     String name = colormaps[randInt(0, colormaps.length)];
@@ -256,10 +256,10 @@ class ColorTransitionsMove implements Pattern {
   void setup() {
     // This is a very different pattern with a small number of rows
     // and a large number of rows.  Both are interesting
-    // TODO: have more control over this.  This is unlikely to have 
+    // TODO: have more control over this.  This is unlikely to have
     //       both dx, and dy small.  Squares are unlikely, etc.
     dx = random(2, width/2);
-    dy = random(2, height/2);  
+    dy = random(2, height/2);
     nRows = int(height / dy + 2); // y
     nCols = int(width / dx + 2); // x
     rows = new Integer[nRows];
@@ -268,7 +268,7 @@ class ColorTransitionsMove implements Pattern {
     ct = new ColorTransition[nCols + 1][nRows + 1];
     // Subtract two because we need one extra rectangle to the left
     // and one to the right.
-    dx = float(width) / (nCols - 2); // dx*(ncols - 2) = w; ncols = w / dx - 2 
+    dx = float(width) / (nCols - 2); // dx*(ncols - 2) = w; ncols = w / dx - 2
     // Same here, we need one above and one below.
     dy = float(height) / (nRows - 2);
     println(dx, dy);
@@ -340,7 +340,7 @@ class ColorTransitionsMove implements Pattern {
       }
     }
   }
-  boolean moveCols() { 
+  boolean moveCols() {
     return !moveRows;
   }
   void cycleDown(int column) {
@@ -515,7 +515,7 @@ class DLA {
     fill(255, 0, 0);
     println(candidate.point.x, candidate.point.y, 5, 5);
     ellipse(candidate.point.x, candidate.point.y, 5, 5);
-    if (reset) { 
+    if (reset) {
       setup();
     }
   }

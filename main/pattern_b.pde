@@ -73,21 +73,21 @@ class PointWithTrail {
       }
     }
   }
-  
+
     Colormap randomColormap() {
     String[] colormaps = {
-      "hsi", 
-      "prism", 
-      "rainbow", 
-      "seismic", 
-      "spring", 
-      "summer", 
-      "tab10", 
-      "tab20", 
-      "tab20b", 
-      "tab20c", 
-      "terrain", 
-      "viridis", 
+      "hsi",
+      "prism",
+      "rainbow",
+      "seismic",
+      "spring",
+      "summer",
+      "tab10",
+      "tab20",
+      "tab20b",
+      "tab20c",
+      "terrain",
+      "viridis",
       "winter"
     };
     String name = colormaps[randInt(0, colormaps.length)];
@@ -224,7 +224,7 @@ class WalkingBar {
     lengthSpeed = reflect(lengthSpeed + random(-.01, .01), -1, 1);
     // There is a relationship between length and maximum rotation speed
     // Length : Max Speed : Actual : Period
-    //  150   :  0.01     :  0.01  :  200 = 6.6 seconds 
+    //  150   :  0.01     :  0.01  :  200 = 6.6 seconds
     //  100   :  0.02     :  0.015 :  133 = 4.3
     //   50   :  0.04     :  0.03  :   66 = 2.2
     //   25   :  0.1      :  0.06  :   33 = 1.1
@@ -232,7 +232,7 @@ class WalkingBar {
   }
 
   List<Pair<PVector, Float>> vectors() {
-    ArrayList<Pair<PVector, Float>> result = new ArrayList<Pair<PVector, Float>>(); 
+    ArrayList<Pair<PVector, Float>> result = new ArrayList<Pair<PVector, Float>>();
     float startingTheta = slope.heading() + PI/2;
     for (float i=-len / 2; i < len / 2; i+=.5) {
       PVector pt = PVector.add(base, PVector.mult(slope, i));
@@ -271,7 +271,7 @@ class VectorInGrid {
   void draw() {
     if (this.v.isOutOfBounds(1)) {
       return;
-    }   
+    }
     // the vectors array is offset one, so our index needs to change
     this.grid[int(this.v.y + 1)*(width + 2) + int(this.v.x + 1)] = this.v;
   }
@@ -310,7 +310,7 @@ class Triangle implements Wave {
       lastY = maxY - (lastY - maxY);
       dy *= -1;
     } else if (lastY < minY) {
-      lastY = minY + (minY - lastY); 
+      lastY = minY + (minY - lastY);
       dy *= -1;
     }
     return lastY;
@@ -319,10 +319,10 @@ class Triangle implements Wave {
 
 
 private static final int[][] NEIGHBORS = {
-  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
-  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1}, 
-  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2}, 
-  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1}, 
+  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0},
+  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1},
+  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2},
+  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1},
   { 1, 2}, { 1, 2}
 };
 

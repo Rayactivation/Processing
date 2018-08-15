@@ -4,7 +4,7 @@ class ImageLoadFire implements Pattern {
   void setup() {
     print("In image loader");
     try{
-      
+
  //   im = loadImage("flames.jpg");
     im = loadImage("stars1.jpg");
     }
@@ -25,7 +25,7 @@ class ImageLoadFire implements Pattern {
     float speed = 0.05;
     float y = (millis() * -speed) % imHeight;
 
-    // Use two copies of the image, so it seems to repeat infinitely  
+    // Use two copies of the image, so it seems to repeat infinitely
 
     image(im, 0, y, width, imHeight);
     image(im, 0, y + imHeight, width, imHeight);

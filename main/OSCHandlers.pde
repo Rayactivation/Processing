@@ -1,6 +1,6 @@
 /*
  OSCHandler space
- 
+
  Handlers for:
  - Heat cam
  - Animation secection controller

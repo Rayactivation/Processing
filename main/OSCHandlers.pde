@@ -1,6 +1,6 @@
 /*
  OSCHandler space
-
+ 
  Handlers for:
  - Heat cam
  - Animation secection controller
@@ -18,7 +18,7 @@ int oscInputPort = 5000;
 //these are global and are delcared here
 static int heatVal = 0;
 static int xControl, yControl = 0;
-
+static int thermoVal = 0;
 
 
 void oscSetup() {
@@ -39,7 +39,11 @@ void oscEvent(OscMessage theMessage) {
 
 
   //tempeature handler
-
+  if (theMessage.checkAddrPattern("/cameraHeatVal")) {
+    //theMessage.print();
+    thermoVal = theMessage.get(0).intValue();
+    println("new heatval: " + thermoVal);
+  }
 
   //controller handler - from my phone with custom touch OSC layout
   if (theMessage.checkAddrPattern("/control/nextAnimation")) {

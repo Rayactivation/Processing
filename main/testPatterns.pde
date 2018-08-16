@@ -27,3 +27,18 @@ class UpDown implements Pattern {
     line(0, val, width, val);
   }
 }
+
+class ColorTest implements Pattern {
+  int hue;
+  void setup() {
+     colorMode(RGB);
+     hue = 0;
+  }
+  void cleanup(){}
+  void draw() {
+    background(0);
+    if (frameCount > 120) {
+        background(10, 10, 10);
+    }
+  }
+}

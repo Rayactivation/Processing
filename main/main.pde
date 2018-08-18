@@ -3,7 +3,7 @@
 // If true, patterns are picked randomly, otherwise they go in sequence
 boolean randomPattern;
 // The full path to the layout file
-String layoutFile;
+String layoutFile;  
 // In production, this need to be 80, generally null for development
 Integer stripSize = null;
 // How long each pattern runs for, in milliseconds

@@ -1,6 +1,6 @@
 /*
  OSCHandler space
- 
+
  Handlers for:
  - Heat cam
  - Animation secection controller
@@ -153,7 +153,7 @@ class MovingAverageTime {
     println("cutoff:", cutoff);
     // guaranteed to have at least have one item in the array
     // so I'm not going to check if its empty
-    float removedSum = 0; 
+    float removedSum = 0;
     while (true) {
       Pair<Integer, Float> pt =  points.peekLast();
       println("pt time:", pt.getValue0(), cutoff);

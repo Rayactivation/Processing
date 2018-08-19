@@ -113,7 +113,7 @@ class ArrayColormap implements Colormap {
     this.arr = arr;
   }
   color getColor(int val) {
-    return this.arr[val];
+    return this.arr[val % 255];
   }
 }
 

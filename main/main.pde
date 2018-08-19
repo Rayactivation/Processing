@@ -48,6 +48,7 @@ void setup() {
   // that happens
   patternClasses = new ArrayList<Class>();
   //patternClasses.add(ColorTest.class);
+
   //patternClasses.add(RandomLinearBalls.class);
   //patternClasses.add(ColorTransitionsMove.class);
   //patternClasses.add(LeftRight.class);
@@ -64,10 +65,10 @@ void setup() {
   //patternClasses.add(ImageLoadStar.class);
   //patternClasses.add(ImageLoadFire.class);
   //patternClasses.add(ImageLoadBlueFire.class);
-  patternClasses.add(primeFade.class);
-
-
-
+  //patternClasses.add(primeFade.class);
+  //patternClasses.add(ColorMapFadder.class);
+  
+  patternClasses.add(Wigg.class);
 
   println("patternClasses size is " + patternClasses.size());
 
@@ -90,10 +91,10 @@ void draw() {
   }
   background(255);
   int startTime = millis();
+  currentPattern.draw();
   if (doBlur == true) {
-    currentPattern.draw();
-  } 
-  filter(BLUR, 2);
+    filter(BLUR, 2);
+  }
   int endTime = millis();
 
   float targetRate = 1000.0 / frameRate;

@@ -119,15 +119,15 @@ class ArrayColormap implements Colormap {
 
 Map<String, Boolean> colormapProps = new HashMap<String, Boolean>();
 void populateColormapProps() {
-  colormapProps.put("hsi", true);   
-  colormapProps.put("prism", true); 
+  colormapProps.put("hsi", true);
+  colormapProps.put("prism", true);
   colormapProps.put("tab10", true);
   colormapProps.put("tab20", true);
   colormapProps.put("tab20b", true);
   colormapProps.put("tab20c", true);
   // These need to be reflected
   colormapProps.put("rainbow", false);
-  colormapProps.put("seismic", false); 
+  colormapProps.put("seismic", false);
   colormapProps.put("spring", false);
   colormapProps.put("summer", false);
   colormapProps.put("terrain", false);
@@ -147,7 +147,7 @@ Colormap getColormap(String name, boolean reflect, boolean reverse) {
   Colormap cm = cache.get(name);
   if (reflect && !colormapProps.get(name)) {
     cm =reflectColormap(cm);
-  } 
+  }
   if (reverse) {
     cm = reverseColormap(cm);
   }
@@ -222,7 +222,7 @@ boolean randBool() {
  *
  */
 int[] BRIGHTNESS = {
-  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134, 
+  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134,
   148, 163, 180, 197, 216, 235, 255};
 int MAX_BRIGHTNESS = BRIGHTNESS.length;
 
@@ -279,8 +279,8 @@ class ColorTransition {
   final int N_STAGES = 4;
   // Used to pick random bright values with a weighting towards
   // brighter values
-  final int[] BRIGHT = {17, 18, 19, 20, 21, 
-    22, 23, 24, 25, 26, 22, 23, 24, 25, 26, 
+  final int[] BRIGHT = {17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31, 27, 28, 29, 30, 31, 27, 28, 29, 30, 31};
   final int DARK = 14;
 

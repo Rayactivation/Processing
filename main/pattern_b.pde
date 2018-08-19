@@ -76,19 +76,19 @@ class PointWithTrail {
   // TODO: create cycles out of the colormaps that don't wrap very well
   Colormap randomColormap() {
     String[] colormaps = {
-      "hsi", 
-      "prism", 
-      "tab10", 
-      "tab20", 
-      "tab20b", 
-      "tab20c", 
+      "hsi",
+      "prism",
+      "tab10",
+      "tab20",
+      "tab20b",
+      "tab20c",
       // These need to be reflected
-      "rainbow", 
-      "seismic", 
-      "spring", 
-      "summer", 
-      "terrain", 
-      "viridis", 
+      "rainbow",
+      "seismic",
+      "spring",
+      "summer",
+      "terrain",
+      "viridis",
       "winter"
     };
     String name = colormaps[randInt(0, colormaps.length)];
@@ -378,10 +378,10 @@ class Triangle implements Wave {
 
 
 private static final int[][] NEIGHBORS = {
-  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
-  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1}, 
-  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2}, 
-  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1}, 
+  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0},
+  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1},
+  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2},
+  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1},
   { 1, 2}, { 1, 2}
 };
 

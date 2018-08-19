@@ -60,9 +60,11 @@ void setup() {
   //patternClasses.add(SpiralHue.class);
   //patternClasses.add(XYControlDraw.class);
   //patternClasses.add(XYControlDot.class);
-  patternClasses.add(Diamonds.class);
-  patternClasses.add(ImageLoadStar.class);
+ // patternClasses.add(Diamonds.class);
+ // patternClasses.add(ImageLoadStar.class);
   patternClasses.add(ImageLoadFire.class);
+  patternClasses.add(ImageLoadBlueFire.class);
+
 
 
   println("patternClasses size is " + patternClasses.size());

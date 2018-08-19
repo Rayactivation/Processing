@@ -1,6 +1,6 @@
 /*
  OSCHandler space
-
+ 
  Handlers for:
  - Heat cam - done, you get an int of all the pixels over a temp threshold
  - Animation secection controller - done, cycles next animation
@@ -29,12 +29,65 @@ static int lastRotationTime;
 static float rotationSpeed;
 // how long it took to make the last rotation
 // in milliseconds
-static float lastRotationDuration;
+static int lastRotationDuration;
 
+/**
+ * Interacts with the heat detector values
+ * to do some basic moving averages and
+ * can be used to change patterns
+ */
+class HeatDetector {
+  // Keep track of the heat average over one
+  // rotation period.  When this hits a certain
+  // Threshold than we want to start showing
+  // The main patterns
+  MovingAverageTime period;
+  // Keep a shorter moving average period
+  // This will, hopefully, be able to detect
+  // an single person / group.
+  // When this goes over a threshold
+  // the ray should blink.
+  //
+  // Could just use the raw heatVal but
+  // that seems like it would be noisy.
+
+  MovingAverageTime recent;
+  float periodValue;
+  float recentValue;
+
+  HeatDetector() {
+    period = new MovingAverageTime();
+    recent = new MovingAverageTime();
+    periodValue = 0;
+    recentValue = 0;
+  }
+
+  void update(int heatVal) {
+    // Memory isn't a concern:
+    // Even if the camera is spewing data every miscrosecond
+    // that would just be 4 million bytes (4mb). The cpu time
+    // involved in that though would probably be too much
+    periodValue = period.update(heatVal, lastRotationDuration);
+    // 5 is... a parameter that will need to be tuned
+    // high enough that random noise won't trigger a flash
+    // but low enough that a person will cause a flash.
+    // Probably should be about half the time that a person
+    // is in the frame of the heat camera?
+    recentValue = recent.update(heatVal, 5000);
+  }
+}
+
+HeatDetector heatDetector;
 
 
 void oscSetup() {
   oscP5tcpServer = new OscP5(this, oscInputPort, OscP5.UDP);
+  // Need to wait until some actual data comes in
+  // Could, maybe, start with some estimated values (but I haven't tested that)
+  lastRotationTime = -1;
+  rotationSpeed = -1;
+  lastRotationDuration = -1;
+  heatDetector = new HeatDetector();
 }
 
 int timeSinceLastRotation() {
@@ -48,25 +101,21 @@ float currentRotationLocation() {
 void oscEvent(OscMessage theMessage) {
   if (theMessage.checkAddrPattern("/rotation")) {
     int now = millis();
-    lastRotationDuration = now - lastRotationTime;
-    rotationSpeed = 2*PI / lastRotationDuration;
+    if (lastRotationTime > 0) {
+      lastRotationDuration = now - lastRotationTime;
+      rotationSpeed = 2*PI / lastRotationDuration;
+    }
     lastRotationTime = now;
+    println("WE HAD A ROTATION");
   }
 
   //heat cam listener
   if (theMessage.checkAddrPattern("/cameraHeatVal")) {
     println("Heat Val is " + theMessage.get(0).intValue());
     heatVal =  theMessage.get(0).intValue();
-  }
-
-  //position handler
-
-
-  //tempeature handler
-  if (theMessage.checkAddrPattern("/cameraHeatVal")) {
-    //theMessage.print();
-    thermoVal = theMessage.get(0).intValue();
-    println("new heatval: " + thermoVal);
+    heatDetector.update(heatVal);
+    println("Period Avg:", heatDetector.periodValue);
+    println("Recent Avg:", heatDetector.recentValue);
   }
 
   //controller handler - from my phone with custom touch OSC layout
@@ -136,35 +185,45 @@ class OscHandlerQueue {
 
 // Calculates the average over the last N milliseconds
 class MovingAverageTime {
-  int period;
   ArrayDeque<Pair<Integer, Float>> points;
   float currentEstimate;
 
-  MovingAverageTime(int period) {
-    this.period = period;
+  MovingAverageTime() {
     points = new ArrayDeque<Pair<Integer, Float>>();
   }
 
-  float update(float point) {
+  // Weird things can happen if an earlier call
+  // uses a small period and then a later call uses a long
+  // period.  The class discards data before `period` so
+  // The earlier call will cause data loss and the later call
+  // will not be "right"
+  // I'm letting the period change because the 
+  float update(float point, int period) {
     int now = millis();
     float currentTotal = currentEstimate * points.size();
     points.push(new Pair<Integer, Float>(now, point));
+    float removedSum = removeOldPoints(now, period);
+    float total = currentTotal - removedSum + point;
+    currentEstimate = total / points.size();
+    return currentEstimate;
+  }
+
+  float removeOldPoints(int now, int period) {
+    if (period < 0) {
+      return 0;  
+    }
     int cutoff = now - period;
-    println("cutoff:", cutoff);
     // guaranteed to have at least have one item in the array
     // so I'm not going to check if its empty
     float removedSum = 0;
     while (true) {
       Pair<Integer, Float> pt =  points.peekLast();
-      println("pt time:", pt.getValue0(), cutoff);
       if (pt.getValue0() >= cutoff) {
         break;
       }
       removedSum += pt.getValue1();
       points.removeLast();
     }
-    float total = currentTotal - removedSum + point;
-    currentEstimate = total / points.size();
-    return currentEstimate;
+    return removedSum;
   }
 }

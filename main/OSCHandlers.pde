@@ -2,8 +2,8 @@
  OSCHandler space
  
  Handlers for:
- - Heat cam
- - Animation secection controller
+ - Heat cam - done, you get an int of all the pixels over a temp threshold
+ - Animation secection controller - done, cycles next animation
  - Ray position informaiton
  - Paramater tweaking
  -heat came threshold

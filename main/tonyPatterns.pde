@@ -4,11 +4,53 @@
  Noinput
  - dimonds that progress outward from the center
  -lepord spots
-
+ 
  Input
  -Two controlled ball that explode when they hit
-
+ 
  */
+
+class primeFade implements Pattern {
+
+  int i, incVal;
+
+    void setup() {
+    colorMode(RGB);
+    println("In primeFade");
+    i = 0;
+    incVal = 3;
+  }
+
+  void cleanup() {
+  }
+
+  void draw() {
+    background(0);
+    i+= incVal;
+    if ( i > 255 * 6 -1) {
+      i = 0;
+    }
+    if ( i < 255){
+      background(i, 0, 0);
+    }
+    else if(i < 255 * 2){
+      background( 255 - (i % 255), 0, 0);
+    }
+    else if ( i < 255 * 3){
+      background(0, i % 255, 0);
+    }
+    else if ( i < 255 * 4){
+      background(0, 255 - (i % 255), 0);
+    }
+        else if ( i < 255 * 5){
+      background(0, 0, i % 255);
+    }
+    else{
+      background(0, 0,  255 - (i % 255));
+    }
+    
+  }
+}
 
 
 //simple test pattern that uses a value from the heat camera to chaneg the color of the circle
@@ -25,7 +67,7 @@ class TonyTest implements Pattern {
   }
 
   void draw() {
-    background(100,100,100);
+    background(100, 100, 100);
     // i = (i + heatVal) % 360;
     fill(color(heatVal, 255, 255));
     ellipse(width / 2, height / 2, 150, 150);
@@ -48,7 +90,7 @@ class XYControlDraw implements Pattern {
   }
 
   void draw() {
-    background(100,100,100);
+    background(100, 100, 100);
     if ( oscHandlerQueue.isAvalible()) {
       PVector p = oscHandlerQueue.pop();
       p.x =map(p.x, 0, 100, 0, width);
@@ -78,7 +120,7 @@ class XYControlDot implements Pattern {
   void cleanup() {
   }
   void draw() {
-    background(100,100,100);
+    background(100, 100, 100);
     fill(30, 100, 100);
     ellipse(map(xControl, 0, 100, 0, width), map(yControl, 0, 100, 0, height), 10, 10);
   }

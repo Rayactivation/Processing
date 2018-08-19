@@ -11,6 +11,8 @@ int patternSwitchTime;
 // On the screen display, show the location of the ray
 boolean showLocations = false;
 
+boolean doBlur = false;
+
 Pattern currentPattern;
 int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
@@ -82,7 +84,10 @@ void draw() {
   }
   background(255);
   int startTime = millis();
-  currentPattern.draw();
+  if (doBlur == true) {
+    currentPattern.draw();
+  } 
+  filter(BLUR, 2);
   int endTime = millis();
 
   float targetRate = 1000.0 / frameRate;

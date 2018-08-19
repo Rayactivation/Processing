@@ -7,6 +7,7 @@ void configure() {
   stripSize = rawStripSize <=0 ? null : rawStripSize;
   patternSwitchTime = int(map.get("patternSwitchTime")) * 1000;
   showLocations = boolean(map.get("showLocations").toLowerCase());
+  doBlur = boolean(map.get("doBlur").toLowerCase());;
 }
 
 HashMap<String, String> loadConfig(String filename) {

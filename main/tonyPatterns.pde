@@ -31,6 +31,7 @@ class ColorMapFadder implements Pattern {
 
     cm = getColormap("hsi");
     i = 0;
+    println("In colorMapFader");
   }
 
   void cleanup() {
@@ -59,7 +60,8 @@ class primeFade implements Pattern {
   void draw() {
     background(0);
     i+= incVal;
-    if ( i > 255 * 6 -1) {
+    println("i value is " + i);
+    if ( i > ((255 * 6) -1)) {
       i = 0;
     }
     if ( i < 255) {
@@ -291,6 +293,8 @@ class Wigg implements Pattern {
     wiggles.add(new Wiggler(height / 2, width / 2, 45, (255 / 7 ) * 4));
     wiggles.add(new Wiggler(height / 2, width / 2, 30, (255 / 7 ) * 5));
     wiggles.add(new Wiggler(height / 2, width / 2, 15, (255 / 7 ) * 6));
+    
+    println("In wiggle");
   }
 
   void cleanup() {

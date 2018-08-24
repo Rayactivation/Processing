@@ -49,24 +49,24 @@ void setup() {
   patternClasses = new ArrayList<Class>();
   //patternClasses.add(ColorTest.class);
 
-  //patternClasses.add(RandomLinearBalls.class);
-  //patternClasses.add(ColorTransitionsMove.class);
+  patternClasses.add(RandomLinearBalls.class);
+  patternClasses.add(ColorTransitionsMove.class);
   //patternClasses.add(LeftRight.class);
   //patternClasses.add(UpDown.class);
-  //patternClasses.add(ColorEmittingBar.class);
-  //patternClasses.add(DlaPattern.class);
-  //patternClasses.add(RandomEbb.class);
+  patternClasses.add(ColorEmittingBar.class);
+  patternClasses.add(DlaPattern.class);
+  patternClasses.add(RandomEbb.class);
   //patternClasses.add(TonyTest.class);
   //patternClasses.add(NickySpecial.class);
-  //patternClasses.add(SpiralHue.class);
+  patternClasses.add(SpiralHue.class);
   //patternClasses.add(XYControlDraw.class);
   //patternClasses.add(XYControlDot.class);
-  //patternClasses.add(Diamonds.class);
-  //patternClasses.add(ImageLoadStar.class);
-  //patternClasses.add(ImageLoadFire.class);
-  //patternClasses.add(ImageLoadBlueFire.class);
-  //patternClasses.add(primeFade.class);
-  //patternClasses.add(ColorMapFadder.class);
+  patternClasses.add(Diamonds.class);
+  patternClasses.add(ImageLoadStar.class);
+  patternClasses.add(ImageLoadFire.class);
+  patternClasses.add(ImageLoadBlueFire.class);
+  patternClasses.add(primeFade.class);
+  patternClasses.add(ColorMapFadder.class);
   
   patternClasses.add(Wigg.class);
 

@@ -269,11 +269,20 @@ Colormap readColormap(String name) {
   return new ArrayColormap(arr);
 }
 
+int _idx = 0;
 Colormap randomColormap(String[] colormaps) {
   String name = colormaps[randInt(0, colormaps.length)];
+  // It can be useful to walk thru the colormaps when trying to determine
+  // which ones are good. Comment out the above line and uncomment this when.
+  //String name = colormaps[_idx++ % colormaps.length];
   boolean reversed = randBool();
   return getColormap(name, true, reversed);
 }
+
+//String[] allColormaps() {
+//  String[] results = new String[colormapProps.size()];
+//  return colormapProps.keySet().toArray(results);
+//}
 
 int randomByte() {
   return int(random(0, 256));
@@ -484,3 +493,85 @@ color hsi2rgb(int hue, int sat, int intensity) {
   }
   return color(r, g, b);
 }
+
+
+// There are actually more, but I've removed
+// duplicates from the list
+String[] allColormaps = {
+  "Blues", 
+  "BrBG", 
+  "BuGn", 
+  "BuPu", 
+  "CMRmap", 
+  "GnBu", 
+  "Greens", 
+  "Greys", 
+  "OrRd", 
+  "Oranges", 
+  "PRGn", 
+  "PiYG", 
+  "PuBu", 
+  "PuBuGn", 
+  "PuOr", 
+  "PuRd", 
+  "Purples", 
+  "RdBu", 
+  "RdGy", 
+  "RdPu", 
+  "RdYlBu", 
+  "RdYlGn", 
+  "Reds", 
+  "Spectral", 
+  "Wistia", 
+  "YlGn", 
+  "YlGnBu", 
+  "YlOrBr", 
+  "YlOrRd", 
+  "afmhot", 
+  "autumn", 
+  "blue", 
+  "bone", 
+  "brg", 
+  "bwr", 
+  "cividis", 
+  "cool", 
+  "coolwarm", 
+  "copper", 
+  "cubehelix", 
+  "flag", 
+  "gist_earth", 
+  "gist_heat", 
+  "gist_ncar", 
+  "gist_rainbow", 
+  "gist_stern", 
+  "gnuplot", 
+  "gnuplot2", 
+  "hot", 
+  "inferno", 
+  "jet", 
+  "magma", 
+  "nipy_spectral", 
+  "ocean", 
+  "pink", 
+  "plasma", 
+  "prism", 
+  "seismic", 
+  "spring", 
+  "summer", 
+  "terrain", 
+  "viridis", 
+  "winter", 
+  // These are palattes, not gradients
+  "Set1", 
+  "Set2", 
+  "Set3", 
+  "Accent", 
+  "Dark2", 
+  "Paired", 
+  "Pastel1", 
+  "Pastel2", 
+  "tab10", 
+  "tab20", 
+  "tab20b", 
+  "tab20c", 
+};

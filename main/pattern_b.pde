@@ -55,27 +55,26 @@ class PointWithTrail {
   LinkedList<VectorInGrid> vs;
   Colormap cm;
   String[] allowedColormaps = {
-      "hsi",
-      "prism",
-      "tab10",
-      "tab20",
-      "tab20b",
-      "tab20c",
-      // These need to be reflected
-      "rainbow",
-      "seismic",
-      "spring",
-      "summer",
-      "terrain",
-      "viridis",
-      "winter"
-    };
+    "hsi", 
+    "prism", 
+    "tab10", 
+    "tab20", 
+    "tab20b", 
+    "tab20c", 
+    "rainbow", 
+    "seismic", 
+    "spring", 
+    "summer", 
+    "terrain", 
+    "viridis", 
+    "winter"
+  };
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
     this.hue = int(random(0, 256));
     bar = new WalkingBar(new PVector(width / 2, height / 2), PVector.fromAngle(random(0, 2*PI)), random(20, 150));
     this.velocity = 1;
-    this.cm = randomColormap();//getColormap("hsi");
+    this.cm = randomColormap(allowedColormaps);
     this.grid = grid;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
@@ -88,13 +87,6 @@ class PointWithTrail {
         break;
       }
     }
-  }
-  // TODO: create cycles out of the colormaps that don't wrap very well
-  Colormap randomColormap() {
-    ;
-    String name = colormaps[randInt(0, colormaps.length)];
-    println("Using colormap " + name);
-    return getColormap(name, true, randBool());
   }
 
   void populateGrid() {
@@ -379,10 +371,10 @@ class Triangle implements Wave {
 
 
 private static final int[][] NEIGHBORS = {
-  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0},
-  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1},
-  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2},
-  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1},
+  {-1, 0}, { 0, -1}, { 0, 1}, { 1, 0}, 
+  { 1, 1}, {-1, 1}, { 1, -1}, {-1, -1}, 
+  {-2, 0}, { 2, 0}, { 0, -2}, { 0, 2}, 
+  {-2, 1}, {-2, -1}, { 2, -1}, { 2, 1}, 
   { 1, 2}, { 1, 2}
 };
 

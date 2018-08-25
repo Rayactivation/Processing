@@ -47,8 +47,8 @@ void setup() {
   // I usually have to restart the processing application when
   // that happens
   patternClasses = new ArrayList<Class>();
+  patternClasses.add(FourierSeries.class);
   //patternClasses.add(ColorTest.class);
-
   patternClasses.add(RandomLinearBalls.class);
   patternClasses.add(ColorTransitionsMove.class);
   //patternClasses.add(LeftRight.class);
@@ -56,6 +56,12 @@ void setup() {
   patternClasses.add(ColorEmittingBar.class);
   patternClasses.add(DlaPattern.class);
   patternClasses.add(RandomEbb.class);
+  //patternClasses.add(RandomLinearBalls.class);
+  //patternClasses.add(ColorTransitionsMove.class);
+  //patternClasses.add(LeftRight.class);
+  //patternClasses.add(UpDown.class);
+  //patternClasses.add(DlaPattern.class);
+  //patternClasses.add(RandomEbb.class);
   //patternClasses.add(TonyTest.class);
   //patternClasses.add(NickySpecial.class);
   patternClasses.add(SpiralHue.class);

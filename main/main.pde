@@ -18,10 +18,11 @@ int nextPatternTime = 0;
 ArrayList<Class> patternClasses;
 int currentPatternIdx = -1;
 OscHandlerQueue oscHandlerQueue;
+int targetFrameRate = 30;
 
 void setup() {
-  frameRate(30);
   size(216, 144);
+  frameRate(targetFrameRate);
   //size(800, 600);
   // Patterns can switch the colorMode but they won't be able
   // to use any of the colormaps as those are in RGB.
@@ -49,32 +50,31 @@ void setup() {
   patternClasses = new ArrayList<Class>();
   patternClasses.add(FourierSeries.class);
   //patternClasses.add(ColorTest.class);
-  patternClasses.add(RandomLinearBalls.class);
-  patternClasses.add(ColorTransitionsMove.class);
-  //patternClasses.add(LeftRight.class);
-  //patternClasses.add(UpDown.class);
-  patternClasses.add(ColorEmittingBar.class);
-  patternClasses.add(DlaPattern.class);
-  patternClasses.add(RandomEbb.class);
   //patternClasses.add(RandomLinearBalls.class);
   //patternClasses.add(ColorTransitionsMove.class);
-  //patternClasses.add(LeftRight.class);
-  //patternClasses.add(UpDown.class);
+  ////patternClasses.add(LeftRight.class);
+  ////patternClasses.add(UpDown.class);
+  //patternClasses.add(ColorEmittingBar.class);
   //patternClasses.add(DlaPattern.class);
   //patternClasses.add(RandomEbb.class);
-  //patternClasses.add(TonyTest.class);
-  //patternClasses.add(NickySpecial.class);
-  patternClasses.add(SpiralHue.class);
-  //patternClasses.add(XYControlDraw.class);
-  //patternClasses.add(XYControlDot.class);
-  patternClasses.add(Diamonds.class);
-  patternClasses.add(ImageLoadStar.class);
-  patternClasses.add(ImageLoadFire.class);
-  patternClasses.add(ImageLoadBlueFire.class);
-  patternClasses.add(primeFade.class);
-  patternClasses.add(ColorMapFadder.class);
-  
-  patternClasses.add(Wigg.class);
+  ////patternClasses.add(RandomLinearBalls.class);
+  ////patternClasses.add(ColorTransitionsMove.class);
+  ////patternClasses.add(LeftRight.class);
+  ////patternClasses.add(UpDown.class);
+  ////patternClasses.add(DlaPattern.class);
+  ////patternClasses.add(RandomEbb.class);
+  ////patternClasses.add(TonyTest.class);
+  ////patternClasses.add(NickySpecial.class);
+  //patternClasses.add(SpiralHue.class);
+  ////patternClasses.add(XYControlDraw.class);
+  ////patternClasses.add(XYControlDot.class);
+  //patternClasses.add(Diamonds.class);
+  //patternClasses.add(ImageLoadStar.class);
+  //patternClasses.add(ImageLoadFire.class);
+  //patternClasses.add(ImageLoadBlueFire.class);
+  //patternClasses.add(primeFade.class);
+  //patternClasses.add(ColorMapFadder.class);
+  //patternClasses.add(Wigg.class);
 
   println("patternClasses size is " + patternClasses.size());
 
@@ -103,7 +103,8 @@ void draw() {
   }
   int endTime = millis();
 
-  float targetRate = 1000.0 / frameRate;
+  if (frameRate < 30)
+  
   if ((endTime - startTime) > targetRate) {
     println("Draw took too long: " + (endTime - startTime) + " > " + targetRate);
   }

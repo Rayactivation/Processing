@@ -9,11 +9,13 @@ class FourierSeries implements Pattern {
   int N = X_PERIODS.length * Y_PERIODS.length;
   float offset = 0;
   int hueOffset = 0;
+  Colormap cm;
 
   void setup() {
     size(216, 144);  
     frameRate(30);
-    colorMode(HSB, 360, 1, 1);
+    colorMode(RGB, 255, 255, 255);
+    this.cm = randomColormap();
     for (int i = 0; i < 65536; ++i) {
       a[i] = sin(i * PI * 2.0 / 65536.0);
     }
@@ -30,14 +32,16 @@ class FourierSeries implements Pattern {
     loadPixels();
     for (int x=0; x<width; x++) {
       for (int y=0; y<height; y++) {
-        int hue = int(hueOffset + 360/4*calculate(x, y, offset)) % 360;
-        pixels[x + y*width] = color(hue, 1, 1);
+        int colorIdx = hueOffset + int(255 * calculate(x, y, offset));
+        pixels[x + y*width] = this.cm.getColor(colorIdx);
       }
     }
     updatePixels();
     offset += 2 / frameRate;
     hueOffset += 45 / frameRate;
   }
+
+
 
   float calculate(float x, float y, float offset) {
     float total = 0;
@@ -57,7 +61,7 @@ class FourierSeries implements Pattern {
         cnt++;
       }
     } 
-    return total;
+    return total / 4;
   }
 
   // Math Helper

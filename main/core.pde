@@ -113,23 +113,93 @@ class ArrayColormap implements Colormap {
     this.arr = arr;
   }
   color getColor(int val) {
-    return this.arr[val % 255];
+    return this.arr[val & 0xFF];
   }
 }
 
+// Only one property - T/F if the colormap is a full cycle
+// For example, HSI loops around from red back to red, so its a full cycle
 Map<String, Boolean> colormapProps = new HashMap<String, Boolean>();
 void populateColormapProps() {
+  colormapProps.put("Accent", true);
+  colormapProps.put("Blues", false);
+  colormapProps.put("BrBG", false);
+  colormapProps.put("BuGn", false);
+  colormapProps.put("BuPu", false);
+  colormapProps.put("CMRmap", false);
+  colormapProps.put("Dark2", true);
+  colormapProps.put("GnBu", false);
+  colormapProps.put("Greens", false);
+  colormapProps.put("Greys", false);
+  colormapProps.put("OrRd", false);
+  colormapProps.put("Oranges", false);
+  colormapProps.put("PRGn", false);
+  colormapProps.put("Paired", true);
+  colormapProps.put("Pastel1", true);
+  colormapProps.put("Pastel2", true);
+  colormapProps.put("PiYG", false);
+  colormapProps.put("PuBu", false);
+  colormapProps.put("PuBuGn", false);
+  colormapProps.put("PuOr", false);
+  colormapProps.put("PuRd", false);
+  colormapProps.put("Purples", false);
+  colormapProps.put("RdBu", false);
+  colormapProps.put("RdGy", false);
+  colormapProps.put("RdPu", false);
+  colormapProps.put("RdYlBu", false);
+  colormapProps.put("RdYlGn", false);
+  colormapProps.put("Reds", false);
+  colormapProps.put("Set1", true);
+  colormapProps.put("Set2", true);
+  colormapProps.put("Set3", true);
+  colormapProps.put("Spectral", false);
+  colormapProps.put("Wistia", false);
+  colormapProps.put("YlGn", false);
+  colormapProps.put("YlGnBu", false);
+  colormapProps.put("YlOrBr", false);
+  colormapProps.put("YlOrRd", false);
+  colormapProps.put("afmhot", false);
+  colormapProps.put("autumn", false);
+  colormapProps.put("binary", false);
+  colormapProps.put("blue", true);
+  colormapProps.put("bone", false);
+  colormapProps.put("brg", false);
+  colormapProps.put("bwr", false);
+  colormapProps.put("cividis", false);
+  colormapProps.put("cool", false);
+  colormapProps.put("coolwarm", false);
+  colormapProps.put("copper", false);
+  colormapProps.put("cubehelix", false);
+  colormapProps.put("flag", true);
+  colormapProps.put("gist_earth", false);
+  colormapProps.put("gist_gray", false);
+  colormapProps.put("gist_heat", false);
+  colormapProps.put("gist_ncar", false);
+  colormapProps.put("gist_rainbow", true);
+  colormapProps.put("gist_stern", false);
+  colormapProps.put("gist_yarg", false);
+  colormapProps.put("gnuplot", false);
+  colormapProps.put("gnuplot2", false);
+  colormapProps.put("gray", false);
+  colormapProps.put("hot", false);
   colormapProps.put("hsi", true);
+  colormapProps.put("hsv", true);
+  colormapProps.put("inferno", false);
+  colormapProps.put("jet", false);
+  colormapProps.put("magma", false);
+  colormapProps.put("nipy_spectral", false);
+  colormapProps.put("ocean", false);
+  colormapProps.put("pink", false);
+  colormapProps.put("plasma", false);
   colormapProps.put("prism", true);
-  colormapProps.put("tab10", true);
-  colormapProps.put("tab20", true);
-  colormapProps.put("tab20b", true);
-  colormapProps.put("tab20c", true);
-  // These need to be reflected
   colormapProps.put("rainbow", false);
   colormapProps.put("seismic", false);
   colormapProps.put("spring", false);
   colormapProps.put("summer", false);
+  colormapProps.put("tab10", true);
+  colormapProps.put("tab20", true);
+  colormapProps.put("tab20b", true);
+  colormapProps.put("tab20c", true);
   colormapProps.put("terrain", false);
   colormapProps.put("viridis", false);
   colormapProps.put("winter", false);
@@ -139,14 +209,20 @@ Map<String, Colormap> cache = new LruCache<String, Colormap>(10);
 Colormap getColormap(String name) {
   return getColormap(name, false, false);
 }
+
+/**
+ * get a colormap by its name
+ * Note that reflect only applies to colormaps that are not full cycles
+ */
 Colormap getColormap(String name, boolean reflect, boolean reverse) {
+  println("Using colormap", name);
   if (!cache.containsKey(name)) {
     Colormap cm = readColormap(name);
     cache.put(name, cm);
   }
   Colormap cm = cache.get(name);
   if (reflect && !colormapProps.get(name)) {
-    cm =reflectColormap(cm);
+    cm = reflectColormap(cm);
   }
   if (reverse) {
     cm = reverseColormap(cm);
@@ -193,6 +269,12 @@ Colormap readColormap(String name) {
   return new ArrayColormap(arr);
 }
 
+Colormap randomColormap(String[] colormaps) {
+  String name = colormaps[randInt(0, colormaps.length)];
+  boolean reversed = randBool();
+  return getColormap(name, true, reversed);
+}
+
 int randomByte() {
   return int(random(0, 256));
 }
@@ -222,7 +304,7 @@ boolean randBool() {
  *
  */
 int[] BRIGHTNESS = {
-  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134,
+  0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 18, 22, 27, 32, 38, 44, 51, 58, 67, 76, 86, 96, 108, 120, 134, 
   148, 163, 180, 197, 216, 235, 255};
 int MAX_BRIGHTNESS = BRIGHTNESS.length;
 
@@ -279,8 +361,8 @@ class ColorTransition {
   final int N_STAGES = 4;
   // Used to pick random bright values with a weighting towards
   // brighter values
-  final int[] BRIGHT = {17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 22, 23, 24, 25, 26,
+  final int[] BRIGHT = {17, 18, 19, 20, 21, 
+    22, 23, 24, 25, 26, 22, 23, 24, 25, 26, 
     27, 28, 29, 30, 31, 27, 28, 29, 30, 31, 27, 28, 29, 30, 31};
   final int DARK = 14;
 

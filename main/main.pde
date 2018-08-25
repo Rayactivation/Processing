@@ -20,6 +20,9 @@ int currentPatternIdx = -1;
 OscHandlerQueue oscHandlerQueue;
 int targetFrameRate = 30;
 
+// This is reset on each pattern to zero
+int slowWarningCount = 0;
+
 void setup() {
   size(216, 144);
   frameRate(targetFrameRate);
@@ -52,17 +55,11 @@ void setup() {
   //patternClasses.add(ColorTest.class);
   //patternClasses.add(RandomLinearBalls.class);
   //patternClasses.add(ColorTransitionsMove.class);
-  ////patternClasses.add(LeftRight.class);
-  ////patternClasses.add(UpDown.class);
+  //patternClasses.add(LeftRight.class);
+  //patternClasses.add(UpDown.class);
   //patternClasses.add(ColorEmittingBar.class);
   //patternClasses.add(DlaPattern.class);
   //patternClasses.add(RandomEbb.class);
-  ////patternClasses.add(RandomLinearBalls.class);
-  ////patternClasses.add(ColorTransitionsMove.class);
-  ////patternClasses.add(LeftRight.class);
-  ////patternClasses.add(UpDown.class);
-  ////patternClasses.add(DlaPattern.class);
-  ////patternClasses.add(RandomEbb.class);
   ////patternClasses.add(TonyTest.class);
   ////patternClasses.add(NickySpecial.class);
   //patternClasses.add(SpiralHue.class);
@@ -103,15 +100,21 @@ void draw() {
   }
   int endTime = millis();
 
-  if (frameRate < 30)
-  
+  float targetRate = 1000.0 / targetFrameRate;
   if ((endTime - startTime) > targetRate) {
-    println("Draw took too long: " + (endTime - startTime) + " > " + targetRate);
+    if (slowWarningCount <= 10) {
+      println("Draw took too long: " + (endTime - startTime) + " > " + targetRate);
+      if (slowWarningCount == 10) {
+        println("Suppressing slow warning error for rest of pattern");  
+      }
+      slowWarningCount++;
+    }
   }
 }
 
 
 void nextPattern() {
+  slowWarningCount = 0;
   int startTime = millis();
   nextPatternTime = millis() + patternSwitchTime;
   currentPattern = newPattern();

@@ -54,6 +54,22 @@ class PointWithTrail {
   WalkingBar bar;
   LinkedList<VectorInGrid> vs;
   Colormap cm;
+  String[] allowedColormaps = {
+      "hsi",
+      "prism",
+      "tab10",
+      "tab20",
+      "tab20b",
+      "tab20c",
+      // These need to be reflected
+      "rainbow",
+      "seismic",
+      "spring",
+      "summer",
+      "terrain",
+      "viridis",
+      "winter"
+    };
 
   PointWithTrail(VectorWithColor[] grid, int gridWidth, int gridHeight) {
     this.hue = int(random(0, 256));
@@ -75,22 +91,7 @@ class PointWithTrail {
   }
   // TODO: create cycles out of the colormaps that don't wrap very well
   Colormap randomColormap() {
-    String[] colormaps = {
-      "hsi",
-      "prism",
-      "tab10",
-      "tab20",
-      "tab20b",
-      "tab20c",
-      // These need to be reflected
-      "rainbow",
-      "seismic",
-      "spring",
-      "summer",
-      "terrain",
-      "viridis",
-      "winter"
-    };
+    ;
     String name = colormaps[randInt(0, colormaps.length)];
     println("Using colormap " + name);
     return getColormap(name, true, randBool());

@@ -70,42 +70,108 @@ class RandomEbb implements Pattern {
 class RandomLinearBalls implements Pattern {
   LinkedList<EllipseAtVector> vs;
   Colormap cm;
-
+  // There are actually more, but I've removed
+  // duplicates from the list
+  String[] allowedColormaps = {
+    "Blues", 
+    "BrBG", 
+    "BuGn", 
+    "BuPu", 
+    "CMRmap", 
+    "GnBu", 
+    "Greens", 
+    "Greys", 
+    "OrRd", 
+    "Oranges", 
+    "PRGn", 
+    "PiYG", 
+    "PuBu", 
+    "PuBuGn", 
+    "PuOr", 
+    "PuRd", 
+    "Purples", 
+    "RdBu", 
+    "RdGy", 
+    "RdPu", 
+    "RdYlBu", 
+    "RdYlGn", 
+    "Reds", 
+    "Spectral", 
+    "Wistia", 
+    "YlGn", 
+    "YlGnBu", 
+    "YlOrBr", 
+    "YlOrRd", 
+    "afmhot", 
+    "autumn", 
+    "blue", 
+    "bone", 
+    "brg", 
+    "bwr", 
+    "cividis", 
+    "cool", 
+    "coolwarm", 
+    "copper", 
+    "cubehelix", 
+    "flag", 
+    "gist_earth", 
+    "gist_heat", 
+    "gist_ncar", 
+    "gist_stern", 
+    "gnuplot", 
+    "gnuplot2", 
+    "hot", 
+    "inferno", 
+    "jet", 
+    "magma", 
+    "nipy_spectral", 
+    "ocean", 
+    "pink", 
+    "plasma", 
+    "prism", 
+    "seismic", 
+    "spring", 
+    "summer", 
+    "terrain", 
+    "viridis", 
+    "winter", 
+    // These are palattes, not gradients
+    "Set1", 
+    "Set2", 
+    "Set3", 
+    "Accent", 
+    "Dark2", 
+    "Paired", 
+    "Pastel1", 
+    "Pastel2", 
+    "tab10", 
+    "tab20", 
+    "tab20b", 
+    "tab20c", 
+  };
+  int nBalls;
+  int ballDiameter;
+  int[] ballDiameters = new int[]{6, 7, 8, 10, 15, 25};
   void setup() {
-    cm = randomColormap();
+    // We want approximately 40% of the screen to be filled with balls
+    // pi * (diam / 2)^2 * nBalls = .4 * height * width
+    ballDiameter = ballDiameters[randInt(0, ballDiameters.length)];
+    nBalls = int(.4 * height * width / PI * pow(2.0 / ballDiameter, 2));
+    println("Diameter:", ballDiameter, "nBalls:", nBalls);
+    cm = randomColormap(allowedColormaps);
     vs = new LinkedList<EllipseAtVector>();
-    for (int i=0; i<300; i++) {
+    for (int i=0; i<nBalls; i++) {
       vs.add(randomVector());
     }
   }
   void cleanup() {
   }
 
-  Colormap randomColormap() {
-    String[] colormaps = {
-      "hsi",
-      "prism",
-      "rainbow",
-      "seismic",
-      "spring",
-      "summer",
-      "tab10",
-      "tab20",
-      "tab20b",
-      "tab20c",
-      "terrain",
-      "viridis",
-      "winter"
-    };
-    String name = colormaps[randInt(0, colormaps.length)];
-    println("Using colormap " + name);
-    return getColormap(name);
-  }
 
   EllipseAtVector randomVector() {
     color c = cm.getColor(randomByte());
     VectorWithColor v = new VectorWithColor(random(0, width), random(0, height), random(0, 2*PI), random(.2, 3), c);
-    return new EllipseAtVector(v);
+    return new EllipseAtVector(v, ballDiameter);
   }
 
   void draw() {
@@ -130,9 +196,10 @@ class RandomLinearBalls implements Pattern {
 
 class EllipseAtVector {
   VectorWithColor v;
-  int diameter = 7;
-  EllipseAtVector(VectorWithColor v) {
+  int diameter;
+  EllipseAtVector(VectorWithColor v, int diameter) {
     this.v = v;
+    this.diameter = diameter;
   }
 
   void update() {

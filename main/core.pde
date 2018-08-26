@@ -271,10 +271,10 @@ Colormap readColormap(String name) {
 
 int _idx = 0;
 Colormap randomColormap(String[] colormaps) {
-  String name = colormaps[randInt(0, colormaps.length)];
+  //String name = colormaps[randInt(0, colormaps.length)];
   // It can be useful to walk thru the colormaps when trying to determine
   // which ones are good. Comment out the above line and uncomment this when.
-  //String name = colormaps[_idx++ % colormaps.length];
+  String name = colormaps[_idx++ % colormaps.length];
   boolean reversed = randBool();
   return getColormap(name, true, reversed);
 }
@@ -541,8 +541,7 @@ String[] allColormaps = {
   "flag", 
   "gist_earth", 
   "gist_heat", 
-  "gist_ncar", 
-  "gist_rainbow", 
+  "gist_ncar",  
   "gist_stern", 
   "gnuplot", 
   "gnuplot2", 
